@@ -7,7 +7,6 @@ provider "google" {
 variable "credentials_file" {
   description = "Path to the Google Cloud service account credentials JSON file"
   type        = string
-  default     = "GCP-MyFirstProject-1c31159db52c.json"  # Update this with your actual path
 }
 
 # Secrets module

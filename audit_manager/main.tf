@@ -13,7 +13,7 @@ resource "google_cloud_run_service" "page_builder" {
     spec {
       containers {
         # Using the latest image from Artifact Registry
-        image = "${var.region}-docker.pkg.dev/${var.project_id}/page-builder/page-builder:latest"
+        image = "${var.region}-docker.pkg.dev/${var.project_id}/audit-manager/audit-manager:latest"
       }
     }
   }

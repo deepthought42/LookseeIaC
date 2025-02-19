@@ -1,6 +1,5 @@
 variable "project_id" {
   description = "The GCP project ID"
-  default     = "webcrawler-450417"
 }
 
 variable "region" {
