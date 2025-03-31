@@ -32,27 +32,3 @@ resource "google_project_iam_member" "vpc_admin" {
   role    = "roles/compute.networkAdmin"
   member  = "serviceAccount:${google_service_account.vpc_service_account.email}"
 }
-
-# Variables file reference
-variable "project_id" {
-  description = "The ID of the GCP project"
-  type        = string
-}
-
-variable "region" {
-  description = "The region where resources will be created"
-  type        = string
-  default     = "us-central1"
-}
-
-variable "vpc_name" {
-  description = "Name of the VPC network"
-  type        = string
-  default     = "custom-vpc"
-}
-
-variable "subnet_cidr" {
-  description = "CIDR range for the subnet"
-  type        = string
-  default     = "10.0.0.0/24"
-}

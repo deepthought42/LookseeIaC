@@ -3,6 +3,30 @@ provider "google" {
   region  = var.region
 }
 
+
+# VPC module
+module "vpc" {
+  source = "./vpc"
+
+  project_id  = var.project_id
+  environment = var.environment
+  labels = var.labels
+}
+
+# Cloud Run module
+module "cloud_run" {
+  source = "./cloud-run"
+
+  project_id  = var.project_id
+  environment = var.environment
+  pubsub_topic_name = var.pubsub_topic_name
+  service_name = var.service_name
+  region = var.region
+  image = var.image
+  labels = var.labels
+}
+
+
 # Add variables for authentication
 variable "credentials_file" {
   description = "Path to the Google Cloud service account credentials JSON file"
