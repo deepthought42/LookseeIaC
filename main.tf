@@ -3,7 +3,6 @@ provider "google" {
   region  = var.region
 }
 
-
 # VPC module
 module "vpc" {
   source = "./vpc"
@@ -25,7 +24,6 @@ module "cloud_run" {
   image = var.image
   labels = var.labels
 }
-
 
 # Add variables for authentication
 variable "credentials_file" {

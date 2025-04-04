@@ -1,4 +1,8 @@
 # URL Pub/Sub topic
+output "topic_id" {
+  description = "The ID of the topic"
+  value       = google_pubsub_topic.url_topic.id
+}
 
 output "url_topic_name" {
   description = "The name of the URL Pub/Sub topic"
