@@ -1,41 +1,20 @@
 # URL Pub/Sub topic
-
-output "url_topic_name" {
-  description = "The name of the URL Pub/Sub topic"
-  value       = google_pubsub_topic.url_topic.name
+output "topic_id" {
+  description = "The ID of the PubSub topic"
+  value       = google_pubsub_topic.topic.id
 }
 
-output "page_created_topic_name" {
-  description = "The name of the PageCreated Pub/Sub topic"
-  value       = google_pubsub_topic.page_created_topic.name
+output "pubsub_subscription_id" {
+  value       = google_pubsub_subscription.push_subscription.id
+  description = "The ID of the PubSub push subscription"
 }
 
-output "page_audit_topic_name" {
-  description = "The name of the PageAudit topic"
-  value       = google_pubsub_topic.page_audit_topic.name
+output "pubsub_service_account_email" {
+  value       = google_service_account.pubsub_sa.email
+  description = "The email of the service account used for PubSub to invoke Cloud Run"
 }
 
-output "journey_verified_topic_name" {
-  description = "The name of the JourneyVerified topic"
-  value       = google_pubsub_topic.journey_verified_topic.name
-}
-
-output "journey_discarded_topic_name" {
-  description = "The name of the JourneyDiscarded topic"
-  value       = google_pubsub_topic.journey_discarded_topic.name
-}
-
-output "journey_candidate_topic_name" {
-  description = "The name of the JourneyCandidate topic"
-  value       = google_pubsub_topic.journey_candidate_topic.name
-}
-
-output "audit_update_topic_name" {
-  description = "The name of the AuditUpdate topic"
-  value       = google_pubsub_topic.audit_update_topic.name
-}
-
-output "journey_completion_cleanup_topic_name" {
-  description = "The name of the JourneyCompletionCleanup topic"
-  value       = google_pubsub_topic.journey_completion_cleanup_topic.name
+output "pubsub_topic_name" {
+  value       = google_pubsub_topic.topic.name
+  description = "The name of the PubSub topic"
 }

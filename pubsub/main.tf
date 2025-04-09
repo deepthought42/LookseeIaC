@@ -1,7 +1,6 @@
 # Create the Pub/Sub topic
-# URL topic
-resource "google_pubsub_topic" "url_topic" {
-  name    = "URL"
+resource "google_pubsub_topic" "$${var.topic_name}" {
+  name    = var.topic_name
   project = var.project_id
 
   # Optional: Add labels if you want to organize/identify your resources
@@ -10,72 +9,25 @@ resource "google_pubsub_topic" "url_topic" {
   }
 }
 
-# PageCreated topic
-resource "google_pubsub_topic" "page_created_topic" {
-  name    = "PageCreated"
+# Create PubSub push subscription to Cloud Run
+resource "google_pubsub_subscription" "push_subscription" {
+  name    = "${var.topic_name}-push-sub"
+  topic   = google_pubsub_topic.topic.name
   project = var.project_id
 
-  labels = {
-    environment = var.environment
+  push_config {
+    push_endpoint = google_cloud_run_service.service.status[0].url
+    
+    oidc_token {
+      service_account_email = google_service_account.pubsub_sa.email
+    }
   }
-}
 
-# PageAudit topic
-resource "google_pubsub_topic" "page_audit_topic" {
-  name    = "PageAudit"
-  project = var.project_id
-
-  labels = {
-    environment = var.environment
+  # Configure retry policy
+  retry_policy {
+    minimum_backoff = "10s"
+    maximum_backoff = "600s"
   }
-}
 
-# JourneyVerified topic
-resource "google_pubsub_topic" "journey_verified_topic" {
-  name    = "JourneyVerified"
-  project = var.project_id
-
-  labels = {
-    environment = var.environment
-  }
-}
-
-# JourneyDiscarded topic
-resource "google_pubsub_topic" "journey_discarded_topic" {
-  name    = "JourneyDiscarded"
-  project = var.project_id
-
-  labels = {
-    environment = var.environment
-  }
-}
-
-# JourneyCandidate topic
-resource "google_pubsub_topic" "journey_candidate_topic" {
-  name    = "JourneyCandidate"
-  project = var.project_id
-
-  labels = {
-    environment = var.environment
-  }
-}
-
-# AuditUpdate topic
-resource "google_pubsub_topic" "audit_update_topic" {
-  name    = "AuditUpdate"
-  project = var.project_id
-
-  labels = {
-    environment = var.environment
-  }
-}
-
-# JourneyCompletionCleanup topic
-resource "google_pubsub_topic" "journey_completion_cleanup_topic" {
-  name    = "JourneyCompletionCleanup"
-  project = var.project_id
-
-  labels = {
-    environment = var.environment
-  }
+  labels = var.labels
 }

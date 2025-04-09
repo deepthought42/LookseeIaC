@@ -12,6 +12,11 @@ variable "topic_name" {
   description = "The name of the Pub/Sub topic"
 }
 
+variable "publisher_topics" {
+  description = "List of name of the Pub/Sub topics to publish messages to"
+  type        = map(string)
+}
+
 variable "region" {
   description = "The region where resources will be created"
   type        = string
@@ -41,4 +46,9 @@ variable "service_account_name" {
 variable "labels" {
   description = "Environment labels"
   type        = map(string)
+  default     = {
+    environment = var.environment
+    managed-by     = "terraform"
+    application    = var.service_name
+  }
 }

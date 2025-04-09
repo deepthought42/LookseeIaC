@@ -23,9 +23,9 @@ variable "image" {
   type        = string
 }
 
-variable "pubsub_topic_name" {
-  description = "Name of the PubSub topic to publish to"
-  type        = string
+variable "pubsub_topics" {
+  description = "List of PubSub topic names to publish messages to"
+  type        = map(string)
 }
 
 variable "service_account_name" {
