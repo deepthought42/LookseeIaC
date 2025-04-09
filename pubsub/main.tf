@@ -4,19 +4,17 @@ resource "google_pubsub_topic" "$${var.topic_name}" {
   project = var.project_id
 
   # Optional: Add labels if you want to organize/identify your resources
-  labels = {
-    environment = var.environment
-  }
+  labels = var.labels
 }
 
 # Create PubSub push subscription to Cloud Run
 resource "google_pubsub_subscription" "push_subscription" {
-  name    = "${var.topic_name}-push-sub"
+  name    = "${var.service_name}-push-sub"
   topic   = google_pubsub_topic.topic.name
   project = var.project_id
 
   push_config {
-    push_endpoint = google_cloud_run_service.service.status[0].url
+    push_endpoint = var.cloud_run_url
     
     oidc_token {
       service_account_email = google_service_account.pubsub_sa.email

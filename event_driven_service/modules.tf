@@ -22,5 +22,6 @@ module "pubsub" {
   topic_name = var.topic_name
   service_name = var.service_name
   labels = local.resource_labels
+  cloud_run_url = module.cloud_run.cloud_run_url
   depends_on = [module.cloud_run]
 }

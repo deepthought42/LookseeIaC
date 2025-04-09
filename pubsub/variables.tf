@@ -18,6 +18,11 @@ variable "service_name" {
   type        = string
 }
 
+variable "cloud_run_url" {
+  description = "The URL of the deployed Cloud Run service"
+  type        = string
+}
+
 variable "labels" {
   description = "Default labels for PubSub resources"
   type        = map(string)
