@@ -10,6 +10,12 @@ variable "environment" {
 
 variable "topic_name" {
   description = "The name of the Pub/Sub topic"
+  type        = string
+}
+
+variable "pubsub_topics" {
+  description = "The name of the Pub/Sub topic"
+  type        = list(string)
 }
 
 variable "publisher_topics" {
