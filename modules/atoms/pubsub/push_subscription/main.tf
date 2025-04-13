@@ -15,4 +15,4 @@ resource "google_pubsub_subscription" "subscription" {
     minimum_backoff = "10s"
     maximum_backoff = "600s"
   }
-} 
+}

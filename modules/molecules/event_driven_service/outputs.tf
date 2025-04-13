@@ -1,5 +1,8 @@
 
-
+output "pubsub_service_account_email" {
+  value       = google_service_account.pubsub_sa.email
+  description = "The email of the service account used for PubSub to invoke Cloud Run"
+} 
 
 ###########################
 # PubSub Topics
