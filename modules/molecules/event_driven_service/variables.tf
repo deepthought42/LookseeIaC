@@ -42,3 +42,13 @@ variable "labels" {
     application = var.service_name
   }
 }
+
+variable "secrets" {
+  description = "List of secrets to mount in the Cloud Run service"
+  type = list(object({
+    env_var   = string     # Environment variable name
+    secret_id = string     # Secret ID in Secret Manager
+    version   = string     # Version of the secret to use
+  }))
+  default = []
+}

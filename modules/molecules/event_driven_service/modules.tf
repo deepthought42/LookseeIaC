@@ -8,11 +8,21 @@ module "cloud_run" {
   source = "../cloud_run"
   project_id = var.project_id
   environment = var.environment
-  pubsub_topics = var.publisher_topics
   service_name = var.service_name
   image = var.image
   region = var.region
   labels = local.resource_labels
+  
+  environment_variables = {
+    for env_var, topic_name in var.pubsub_app_topic_map : env_var => topic_name
+  }
+
+  secrets = {
+    for secret in var.secrets : secret.env_var => {
+      secret_id = secret.secret_id
+      version   = secret.version
+    }
+  }
 }
 
 module "pubsub_topic" {
