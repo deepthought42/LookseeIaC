@@ -15,13 +15,18 @@ module "cloud_run" {
   labels = local.resource_labels
 }
 
-module "pubsub" {
-  source = "../pubsub"
-  project_id = var.project_id
-  environment = var.environment
-  topic_name = var.topic_name
-  service_name = var.service_name
-  labels = local.resource_labels
-  cloud_run_url = module.cloud_run.cloud_run_url
-  depends_on = [module.cloud_run]
+module "pubsub_topic" {
+  source      = "../pubsub/topic"
+  project_id  = var.project_id
+  topic_name  = var.topic_name
+}
+
+module "pubsub_subscription" {
+  source                = "../pubsub/subscription"
+  project_id           = var.project_id
+  subscription_name    = "${var.service_name}-subscription"
+  topic_id            = module.pubsub_topic.topic_id
+  push_endpoint       = module.cloud_run.cloud_run_url
+  service_account_email = google_service_account.pubsub_sa.email
+  depends_on          = [module.cloud_run]
 }
