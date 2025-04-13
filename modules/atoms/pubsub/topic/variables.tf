@@ -8,18 +8,8 @@ variable "topic_name" {
   type        = string
 }
 
-variable "access_policy_id" {
-  description = "The ID of the access policy to use for VPC Service Controls"
-  type        = string
-}
-
-variable "vpc_access_level" {
-  description = "The resource name of the access level for the VPC"
-  type        = string
-}
-
 variable "labels" {
-  description = "A map of labels to apply to the service perimeter"
+  description = "A map of labels to apply to the topic"
   type        = map(string)
   default     = {}
 }
@@ -29,12 +19,7 @@ variable "service_account_email" {
   type        = string
 } 
 
-variable "environment" {
-  description = "The environment"
-  type        = string
-}
-
-variable "service_name" {
-  description = "The name of the service"
+variable "perimeter_id" {
+  description = "The ID of the VPC service perimeter to associate with this topic"
   type        = string
 }
