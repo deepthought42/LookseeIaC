@@ -28,7 +28,7 @@ variable "pubsub_topics" {
   type        = list(string)
 }
 
-variable "pubsub_topic_map" {
+variable "pubsub_app_topic_map" {
   description = "A map of PubSub topics to their corresponding Cloud Run application environment variables"
   type        = map(string)
 }
