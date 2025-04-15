@@ -3,6 +3,17 @@ variable "project_id" {
   type        = string
 }
 
+variable "environment" {
+  description = "Environment (dev, prod, etc)"
+  type        = string
+  default     = "dev"
+}
+
+variable "service_name" {
+  description = "Name of the service"
+  type        = string
+}
+
 variable "subscription_name" {
   description = "Name of the PubSub subscription"
   type        = string
