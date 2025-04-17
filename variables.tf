@@ -182,3 +182,14 @@ variable "pubsub_service_account_email" {
   description = "Service account email for PubSub admin"
   type        = string
 }
+
+variable "access_policy_id" {
+  description = "Access policy ID"
+  type        = string
+}
+
+variable "vpc_access_level" {
+  description = "VPC access level"
+  type        = string
+}
+

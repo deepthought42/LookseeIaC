@@ -9,24 +9,11 @@ data "google_project" "project" {
 
 # VPC module
 module "vpc" {
-  source = "./vpc"
+  source = "./modules/atoms/vpc"
 
   project_id  = provider.google.project
   environment = var.environment
   labels = var.labels
-}
-
-# Cloud Run module
-module "cloud_run" {
-  source = "./modules/atoms/cloud_run"
-
-  project_id  = data.google_project.project.number
-  environment = var.environment
-  service_name = var.service_name
-  region = var.region
-  image = var.image
-  labels = var.labels
-  pubsub_topics = var.pubsub_topics
 }
 
 # Secrets module
@@ -52,6 +39,24 @@ module "cloud_run" {
 #  pusher_cluster = var.pusher_cluster
 #}
 
+
+
+
+
+
+# PUBSUB PERIMETER
+module "pubsub_perimeter" {
+  source = "./modules/molecules/security/service_perimeter"
+  environment = var.environment
+  service_name = var.service_name
+  access_policy_id = var.access_policy_id
+  perimeter_name   = "crawler-perimeter"
+  project_numbers     = [data.google_project.project.number]
+  restricted_services = ["pubsub.googleapis.com"]
+  allowed_services    = ["pubsub.googleapis.com"]
+  access_level_names = [var.vpc_access_level]
+}
+
 # Pub/Sub module
 module "pubsub" {
   source = "./modules/atoms/pubsub/topic"
@@ -61,28 +66,12 @@ module "pubsub" {
   labels = var.labels
   service_account_email = module.google_service_account.pubsub_sa.email
   perimeter_id = module.pubsub_perimeter.perimeter_id
+  depends_on = [ module.pubsub_perimeter ]
 }
 
-
-
-
-
-module "pubsub_perimeter" {
-  source = "../../../molecules/security/service_perimeter"
-  environment = var.environment
-  service_name = var.service_name
-  access_policy_id = var.access_policy_id
-  perimeter_name   = "crawler-perimeter"
-  
-  project_numbers     = [data.google_project.project.number]
-  restricted_services = ["pubsub.googleapis.com"]
-  allowed_services    = ["pubsub.googleapis.com"]
-  
-  access_level_names = [var.vpc_access_level]
-}
-
+# Page Builder module
 module "page-builder" {
-  source = "../../services/page-builder"
+  source = "./services/page-builder"
   project_id = data.google_project.project.number
   environment = var.environment
   service_name = "Page_Builder"
@@ -90,20 +79,10 @@ module "page-builder" {
   region = var.region
 }
 
-
 # API module
 module "api" {
   source = "./api"
   
-  project_id  = data.google_project.project.number
-  region     = var.region
-  environment = var.environment
-}
-
-# Page Builder module
-module "page_builder" {
-  source = "./page-builder"
-
   project_id  = data.google_project.project.number
   region     = var.region
   environment = var.environment

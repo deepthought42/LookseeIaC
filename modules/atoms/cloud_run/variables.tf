@@ -24,7 +24,7 @@ variable "image" {
 }
 
 variable "pubsub_topics" {
-  description = "List of PubSub topic names to publish messages to"
+  description = "Map of PubSub topic names to publish messages to"
   type        = map(string)
 }
 

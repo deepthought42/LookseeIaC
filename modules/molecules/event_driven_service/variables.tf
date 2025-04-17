@@ -18,6 +18,22 @@ variable "service_name" {
   type        = string
 }
 
+variable "region" {
+  description = "The region to deploy to"
+  type        = string
+}
+
+variable "image" {
+  description = "The container image to deploy"
+  type        = string
+}
+
+variable "pubsub_topics" {
+  description = "Map of the Pub/Sub topics and their corresponding Cloud Run application environment variables"
+  type        = map(string)
+}
+
+
 variable "perimeter_id" {
   description = "The ID of the VPC service perimeter to associate with this topic"
   type        = string
@@ -37,9 +53,7 @@ variable "labels" {
   description = "Environment labels"
   type        = map(string)
   default     = {
-    environment = var.environment
-    managed-by  = "terraform"
-    application = var.service_name
+    managed-by = "terraform"
   }
 }
 
