@@ -34,10 +34,10 @@ variable "pubsub_topics" {
 }
 
 
-variable "perimeter_id" {
-  description = "The ID of the VPC service perimeter to associate with this topic"
-  type        = string
-}
+#variable "perimeter_id" {
+#  description = "The ID of the VPC service perimeter to associate with this topic"
+#  type        = string
+#}
 
 variable "pubsub_app_topic_map" {
   description = "A map of PubSub topics to their corresponding Cloud Run application environment variables"

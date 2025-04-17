@@ -32,7 +32,7 @@ module "pubsub_topic" {
   project_id            = var.project_id
   topic_name            = var.topic_name
   service_account_email = google_service_account.pubsub_sa.email
-  perimeter_id          = var.perimeter_id
+  #perimeter_id          = var.perimeter_id
   labels                = var.labels
 }
 

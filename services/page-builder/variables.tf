@@ -15,7 +15,23 @@ variable "service_name" {
   default     = "page-builder"
 }
 
-variable "vpc_perimeter_id" {
-  description = "The ID of the VPC service perimeter to associate with this topic"
+#variable "vpc_perimeter_id" {
+#  description = "The ID of the VPC service perimeter to associate with this topic"
+#  type        = string
+#}
+
+variable "pubsub_topics" {
+  description = "List of PubSub topics to subscribe to"
+  type        = list(string)
+}
+
+variable "pubsub_app_topic_map" {
+  description = "Map of PubSub topics and their corresponding Cloud Run application environment variables"
+  type        = map(string)
+}
+
+variable "image" {
+  description = "The container image to deploy"
   type        = string
+  default     = "https://hub.docker.com/r/deepthought42/page-builder"
 }

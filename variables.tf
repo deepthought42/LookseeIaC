@@ -1,13 +1,4 @@
 locals {
-  topic_map = {
-    # Page Builder Topics
-    "pubsub.error_topic" = "projects/${var.project_id}/topics/AuditError"
-    "pubsub.audit_topic" = "projects/${var.project_id}/topics/Audit"
-    "pubsub.page_built"  = "projects/${var.project_id}/topics/PageCreated"
-    "pubsub.journey_verified" = "projects/${var.project_id}/topics/JourneyVerified"
-    "pubsub.page_audit_topic" = "projects/${var.project_id}/topics/PageAudit"
-  }
-
   secrets = [
     # Page Builder Secrets
     {
@@ -45,21 +36,33 @@ locals {
     "AUTH0_DOMAIN" = "projects/${var.project_id}/secrets/Auth0Domain/versions/1"
     "AUTH0_ISSUER" = "projects/${var.project_id}/secrets/Auth0Issuer/versions/1"
   }
+
+  topic_paths = {
+    for key, value in var.topic_map :
+    key => value == "" ? "projects/${var.project_id}/topics/${trimprefix(key, "pubsub.")}" : value
+  }
 }
 
 variable "topic_map" {
   description = "A map of pubsub topics to their corresponding Cloud Run application environment variables"
   type        = map(string)
+  default     = {
+    # Page Builder Topics
+    "pubsub.error_topic"      = ""
+    "pubsub.page_built"       = ""
+    "pubsub.journey_verified" = ""
+    "pubsub.page_audit_topic" = ""
+  }
 }
 
-variable "secrets" {
-  description = "List of secrets to mount in the Cloud Run service"
-  type = list(object({
-    env_var   = string     # Environment variable name
-    secret_id = string     # Secret ID in Secret Manager
-    version   = string     # Version of the secret to use
-  }))
-}
+#variable "secrets" {
+#  description = "List of secrets to mount in the Cloud Run service"
+#  type = list(object({
+#    env_var   = string     # Environment variable name
+#    secret_id = string     # Secret ID in Secret Manager
+#    version   = string     # Version of the secret to use
+#  }))
+#}
 
 variable "project_id" {
   description = "The GCP project ID"
@@ -159,8 +162,20 @@ variable "pubsub_topic_name" {
 }
 
 variable "pubsub_topics" {
-  description = "Map of PubSub topics and their corresponding Cloud Run application environment variables"
-  type        = map(string)
+  description = "List of PubSub topics names"
+  type        = list(string)
+
+  validation {
+    condition     = alltrue(values(var.pubsub_topics), [for topic in values(var.pubsub_topics) : topic != ""])
+    error_message = "All values in pubsub_topics must be non-empty strings."
+  }
+
+  default = [
+    "AuditError",
+    "PageCreated",
+    "JourneyVerified",
+    "PageAudit"
+  ]
 }
 
 variable "vpc_name" {
@@ -178,18 +193,13 @@ variable "labels" {
   type        = map(string)
 }
 
-variable "pubsub_service_account_email" {
-  description = "Service account email for PubSub admin"
-  type        = string
-}
+#variable "access_policy_id" {
+#  description = "Access policy ID"
+#  type        = string
+#}
 
-variable "access_policy_id" {
-  description = "Access policy ID"
-  type        = string
-}
-
-variable "vpc_access_level" {
-  description = "VPC access level"
-  type        = string
-}
+#variable "vpc_access_level" {
+#  description = "VPC access level"
+#  type        = string
+#}
 

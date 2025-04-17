@@ -9,37 +9,22 @@ data "google_project" "project" {
 }
 
 module "page-builder" {
-  source = "../../modules/molecules/event_driven_service"
-  project_id           = var.project_id
+  source              = "../../modules/molecules/event_driven_service"
+  image               = var.image
+  project_id          = var.project_id
   environment         = var.environment
   service_name        = "page-builder"
   topic_name          = "page-builder-topic"
-  perimeter_id        = var.vpc_perimeter_id
-  pubsub_topics       = ["topic-1", "topic-2", "notifications"] 
-  pubsub_app_topic_map    = {
-    "topic-1" = "TOPIC_1",
-    "topic-2" = "TOPIC_2",
-    "notifications" = "NOTIFICATIONS"
-  }
+  pubsub_topics       = ["topic-1", "topic-2", "notifications"]
+  region              = var.region
+  pubsub_app_topic_map    = var.pubsub_app_topic_map
   
   labels = {
     environment = var.environment
     managed-by  = "terraform"
-    application = "my-event-service"
+    application = "page-builder"
     team        = "platform"
   }
 
-  secrets = [
-    {
-      env_var   = "SECRET_1"
-      secret_id = "secret-1"
-      version   = "1"
-    },
-    {
-      env_var   = "SECRET_2"
-      secret_id = "secret-2"
-      version   = "1"
-    }
-  ]
   depends_on = [module.pubsub_perimeter]
 }

@@ -19,7 +19,7 @@ variable "service_account_email" {
   type        = string
 } 
 
-variable "perimeter_id" {
-  description = "The ID of the VPC service perimeter to associate with this topic"
-  type        = string
-}
+#variable "perimeter_id" {
+#  description = "The ID of the VPC service perimeter to associate with this topic"
+#  type        = string
+#}
