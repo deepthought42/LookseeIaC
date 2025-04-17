@@ -39,11 +39,6 @@ variable "perimeter_id" {
   type        = string
 }
 
-variable "pubsub_topics" {
-  description = "The name of the Pub/Sub topic"
-  type        = list(string)
-}
-
 variable "pubsub_app_topic_map" {
   description = "A map of PubSub topics to their corresponding Cloud Run application environment variables"
   type        = map(string)
