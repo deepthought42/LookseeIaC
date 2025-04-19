@@ -10,7 +10,7 @@ resource "google_cloud_run_service" "service" {
       containers {
         image = var.image
       }
-      service_account_name = google_service_account.cloud_run_sa.email
+      service_account_name = var.service_account_email
     }
   }
 
@@ -27,4 +27,13 @@ resource "google_cloud_run_service_iam_member" "public" {
   service  = google_cloud_run_service.service.name
   role     = "roles/run.invoker"
   member   = "allUsers"
+}
+
+# Grant PubSub service account permission to invoke Cloud Run
+resource "google_cloud_run_service_iam_member" "pubsub_invoker" {
+  location = google_cloud_run_service.service.location
+  project  = google_cloud_run_service.service.project
+  service  = google_cloud_run_service.service.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${var.service_account_email}"
 }

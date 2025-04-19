@@ -1,9 +1,9 @@
-output "topic_id" {
+output "id" {
   description = "The ID of the PubSub topic"
   value       = google_pubsub_topic.topic.id
 }
 
-output "topic_name" {
+output "name" {
   description = "The name of the PubSub topic"
   value       = google_pubsub_topic.topic.name
 } 

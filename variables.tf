@@ -161,23 +161,6 @@ variable "pubsub_topic_name" {
   type        = string
 }
 
-variable "pubsub_topics" {
-  description = "List of PubSub topics names"
-  type        = list(string)
-
-  validation {
-    condition     = alltrue(values(var.pubsub_topics), [for topic in values(var.pubsub_topics) : topic != ""])
-    error_message = "All values in pubsub_topics must be non-empty strings."
-  }
-
-  default = [
-    "AuditError",
-    "PageCreated",
-    "JourneyVerified",
-    "PageAudit"
-  ]
-}
-
 variable "vpc_name" {
   description = "Name of the VPC network"
   type        = string

@@ -28,10 +28,9 @@ variable "pubsub_topics" {
   type        = map(string)
 }
 
-variable "service_account_name" {
-  description = "Name of the service account for the Cloud Run service"
+variable "service_account_email" {
+  description = "Email of the service account for the Cloud Run service"
   type        = string
-  default     = "cloudrun-pubsub-sa"
 }
 
 variable "labels" {

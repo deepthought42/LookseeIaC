@@ -3,17 +3,30 @@ provider "google" {
   region  = var.region
 }
 
-data "google_project" "project" {
-  project_id = var.project_id
-}
-
 # VPC module
 module "vpc" {
   source = "./modules/atoms/vpc"
 
-  project_id  = provider.google.project
+  project_id  = var.project_id
   environment = var.environment
   labels = var.labels
+}
+
+
+module "pubsub_topics" {
+  source = "./pubsub_topics"
+  project_id = var.project_id
+  labels = var.labels
+  service_account_email = google_service_account.pubsub_sa.email
+  url_topic_name = "url"
+  page_created_topic_name = "page_created"
+  page_audit_topic_name = "page_audit"
+  journey_verified_topic_name = "journey_verified"
+  journey_discarded_topic_name = "journey_discarded"
+  journey_candidate_topic_name = "journey_candidate"
+  audit_update_topic_name = "audit_update"
+  journey_completion_cleanup_topic_name = "journey_completion_cleanup"
+  audit_error_topic_name = "audit_error"
 }
 
 # Secrets module
@@ -57,35 +70,27 @@ module "vpc" {
 #  access_level_names  = [var.vpc_access_level]
 #}
 
-# Pub/Sub module
-module "pubsub" {
-  source = "./modules/atoms/pubsub/topic"
-
-  project_id  = data.google_project.project.number
-  topic_name = var.pubsub_topic_name
-  labels = var.labels
-  service_account_email = module.google_service_account.pubsub_sa.email
-  #perimeter_id = module.pubsub_perimeter.perimeter_id
-  depends_on = [ module.pubsub_perimeter ]
-}
 
 # Page Builder module
-module "page-builder" {
+module "page_builder" {
   source = "./services/page-builder"
-  project_id = data.google_project.project.number
+  project_id = var.project_id
   environment = var.environment
   service_name = "Page_Builder"
   #vpc_perimeter_id = module.pubsub_perimeter.perimeter_id
   region = var.region
-  pubsub_topics = var.pubsub_topics
   pubsub_app_topic_map = var.topic_map
+  url_topic_name = module.pubsub_topics.url_topic_name
+  page_created_topic_name = module.pubsub_topics.page_created_topic_name
+  page_audit_topic_name = module.pubsub_topics.page_audit_topic_name
+  journey_verified_topic_name = module.pubsub_topics.journey_verified_topic_name
+  service_account_email = google_service_account.pubsub_sa.email
 }
 
 # API module
 module "api" {
   source = "./api"
-  
-  project_id  = data.google_project.project.number
+  project_id  = var.project_id
   region     = var.region
   environment = var.environment
 }

@@ -39,11 +39,6 @@ variable "pubsub_topics" {
 #  type        = string
 #}
 
-variable "pubsub_app_topic_map" {
-  description = "A map of PubSub topics to their corresponding Cloud Run application environment variables"
-  type        = map(string)
-}
-
 variable "labels" {
   description = "Environment labels"
   type        = map(string)
@@ -60,4 +55,9 @@ variable "secrets" {
     version   = string     # Version of the secret to use
   }))
   default = []
+}
+
+variable "service_account_email" {
+  description = "Email of the service account for the Cloud Run service"
+  type        = string
 }
