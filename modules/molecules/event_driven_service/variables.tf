@@ -33,11 +33,15 @@ variable "pubsub_topics" {
   type        = map(string)
 }
 
+variable "vpc_connector_name" {
+  description = "The name of the VPC connector to use"
+  type        = string
+}
 
-#variable "perimeter_id" {
-#  description = "The ID of the VPC service perimeter to associate with this topic"
-#  type        = string
-#}
+variable "topic_id" {
+  description = "The ID of the PubSub topic to subscribe to"
+  type        = string
+}
 
 variable "labels" {
   description = "Environment labels"

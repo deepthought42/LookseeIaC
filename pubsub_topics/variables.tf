@@ -3,6 +3,11 @@ variable "project_id" {
   type        = string
 }
 
+variable "region" {
+  description = "The region of the project"
+  type        = string
+}
+
 variable "labels" {
   description = "A map of labels to apply to the topic"
   type        = map(string)

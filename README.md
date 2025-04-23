@@ -1,5 +1,22 @@
 # LookseeIaC
 
+# Prerequisites
+
+- GCP account
+- Terraform CLI
+- Google Cloud SDK
+- Node.js
+
+## Enable GCP Services
+
+- PubSub
+- Secret Manager
+- Cloud Run
+- Cloud Build
+- Cloud Run
+
+
+
 # Deployment
 
 Deploying the web crawler involves setting up multiple serverless services that are connected via GCP PubSub. To successfully deploy it, you need to do a few things:

@@ -1,4 +1,3 @@
-
 # Create Cloud Run service
 resource "google_cloud_run_service" "service" {
   name     = var.service_name
@@ -12,6 +11,12 @@ resource "google_cloud_run_service" "service" {
       }
       service_account_name = var.service_account_email
     }
+    metadata {
+      annotations = {
+        "run.googleapis.com/vpc-access-connector" = var.vpc_connector_name
+        "run.googleapis.com/vpc-access-egress"    = "private-ranges-only"
+      }
+    }
   }
 
   traffic {
@@ -20,20 +25,14 @@ resource "google_cloud_run_service" "service" {
   }
 }
 
-# Make the Cloud Run service publicly accessible
-resource "google_cloud_run_service_iam_member" "public" {
-  location = google_cloud_run_service.service.location
-  project  = google_cloud_run_service.service.project
-  service  = google_cloud_run_service.service.name
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
-
-# Grant PubSub service account permission to invoke Cloud Run
-resource "google_cloud_run_service_iam_member" "pubsub_invoker" {
-  location = google_cloud_run_service.service.location
-  project  = google_cloud_run_service.service.project
-  service  = google_cloud_run_service.service.name
-  role     = "roles/run.invoker"
-  member   = "serviceAccount:${var.service_account_email}"
+module "pubsub_subscription" {
+  source                = "../../atoms/pubsub/push_subscription"
+  project_id            = var.project_id
+  subscription_name     = "${var.service_name}-subscription"
+  topic_id              = var.topic_id
+  push_endpoint         = google_cloud_run_service.service.status[0].url
+  service_account_email = var.service_account_email
+  environment           = var.environment
+  service_name          = var.service_name
+  region                = var.region
 }

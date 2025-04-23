@@ -20,15 +20,10 @@ variable "service_name" {
 #  type        = string
 #}
 
-variable "pubsub_app_topic_map" {
-  description = "Map of PubSub topics and their corresponding Cloud Run application environment variables"
-  type        = map(string)
-}
-
 variable "image" {
   description = "The container image to deploy"
   type        = string
-  default     = "https://hub.docker.com/r/deepthought42/page-builder"
+  default     = "docker.io/deepthought42/page-builder:latest"
 }
 
 variable "service_account_email" {

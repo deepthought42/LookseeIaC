@@ -206,6 +206,3 @@ resource "google_secret_manager_secret_version" "smtp_username_version" {
   secret      = google_secret_manager_secret.smtp_username.id
   secret_data = var.smtp_username
 }
-
-
-

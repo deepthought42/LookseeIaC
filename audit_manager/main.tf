@@ -5,7 +5,7 @@ provider "google" {
 }
 
 # Cloud Run service
-resource "google_cloud_run_service" "page_builder" {
+resource "google_cloud_run_service" "audit_manager" {
   name     = var.service_name
   location = var.region
 
@@ -13,7 +13,7 @@ resource "google_cloud_run_service" "page_builder" {
     spec {
       containers {
         # Using the latest image from Artifact Registry
-        image = "${var.region}-docker.pkg.dev/${var.project_id}/audit-manager/audit-manager:latest"
+        image = "docker.io/deepthought42/audit-manager:latest"
       }
     }
   }

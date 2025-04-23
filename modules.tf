@@ -1,7 +1,15 @@
+locals {
+  resource_labels = merge(var.labels, {
+    environment = var.environment
+    application = var.service_name
+  })
+}
+
 provider "google" {
   project = var.project_id
   region  = var.region
 }
+
 
 # VPC module
 module "vpc" {
@@ -16,6 +24,7 @@ module "vpc" {
 module "pubsub_topics" {
   source = "./pubsub_topics"
   project_id = var.project_id
+  region = var.region
   labels = var.labels
   service_account_email = google_service_account.pubsub_sa.email
   url_topic_name = "url"
@@ -30,27 +39,26 @@ module "pubsub_topics" {
 }
 
 # Secrets module
-#module "secrets" {
-#  source = "./modules/atoms/secrets"
+module "secrets" {
+  source = "./secrets"
+  project_id  = var.project_id
+  environment = var.environment
 
-#  project_id  = data.google_project.project.number
-#  environment = var.environment
+  auth0_client_secret = var.auth0_client_secret
+  auth0_client_id = var.auth0_client_id
 
-#  auth0_client_secret = var.auth0_client_secret
-#  auth0_client_id = var.auth0_client_id
+  neo4j_password = var.neo4j_password
+  neo4j_bolt_uri = var.neo4j_bolt_uri
+  neo4j_db_name = var.neo4j_db_name
+  neo4j_username = var.neo4j_username
 
-#  neo4j_password = var.neo4j_password
-#  neo4j_bolt_uri = var.neo4j_bolt_uri
-#  neo4j_db_name = var.neo4j_db_name
-#  neo4j_username = var.neo4j_username
+  smtp_password = var.smtp_password
+  smtp_username = var.smtp_username
 
-#  smtp_password = var.smtp_password
-#  smtp_username = var.smtp_username
-  
-#  pusher_key = var.pusher_key
-#  pusher_app_id = var.pusher_app_id
-#  pusher_cluster = var.pusher_cluster
-#}
+  pusher_key = var.pusher_key
+  pusher_app_id = var.pusher_app_id
+  pusher_cluster = var.pusher_cluster
+}
 
 
 
@@ -71,21 +79,32 @@ module "pubsub_topics" {
 #}
 
 
-# Page Builder module
-module "page_builder" {
-  source = "./services/page-builder"
-  project_id = var.project_id
-  environment = var.environment
-  service_name = "Page_Builder"
-  #vpc_perimeter_id = module.pubsub_perimeter.perimeter_id
-  region = var.region
-  pubsub_app_topic_map = var.topic_map
-  url_topic_name = module.pubsub_topics.url_topic_name
-  page_created_topic_name = module.pubsub_topics.page_created_topic_name
-  page_audit_topic_name = module.pubsub_topics.page_audit_topic_name
-  journey_verified_topic_name = module.pubsub_topics.journey_verified_topic_name
+###############################
+#
+#  Cloud Run modules
+#
+###############################
+
+# Page Builder Cloud Run module
+module "page_builder_cloud_run" {
+  source                = "./modules/atoms/cloud_run"
+  project_id            = var.project_id
+  environment           = var.environment
+  service_name          = "Page_Builder"
+  image                 = var.page_builder_image
+  region                = var.region
+  topic_id              = module.pubsub_topics.url_topic_id
+  labels                = { "environment" = var.environment, "application" = "Page_Builder" }
   service_account_email = google_service_account.pubsub_sa.email
+  pubsub_topics         = {
+                            "pubsub.page_built": module.pubsub_topics.page_created_topic_name,
+                            "pubsub.page_audit": module.pubsub_topics.page_audit_topic_name,
+                            "pubsub.journey_verified": module.pubsub_topics.journey_verified_topic_name
+                          }
+  vpc_connector_name    = module.vpc.vpc_connector_name
 }
+
+
 
 # API module
 module "api" {

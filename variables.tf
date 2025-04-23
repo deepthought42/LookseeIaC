@@ -36,23 +36,6 @@ locals {
     "AUTH0_DOMAIN" = "projects/${var.project_id}/secrets/Auth0Domain/versions/1"
     "AUTH0_ISSUER" = "projects/${var.project_id}/secrets/Auth0Issuer/versions/1"
   }
-
-  topic_paths = {
-    for key, value in var.topic_map :
-    key => value == "" ? "projects/${var.project_id}/topics/${trimprefix(key, "pubsub.")}" : value
-  }
-}
-
-variable "topic_map" {
-  description = "A map of pubsub topics to their corresponding Cloud Run application environment variables"
-  type        = map(string)
-  default     = {
-    # Page Builder Topics
-    "pubsub.error_topic"      = ""
-    "pubsub.page_built"       = ""
-    "pubsub.journey_verified" = ""
-    "pubsub.page_audit_topic" = ""
-  }
 }
 
 #variable "secrets" {
@@ -151,16 +134,6 @@ variable "service_name" {
   type        = string
 }
 
-variable "image" {
-  description = "Container image to deploy"
-  type        = string
-}
-
-variable "pubsub_topic_name" {
-  description = "Name of the PubSub topic"
-  type        = string
-}
-
 variable "vpc_name" {
   description = "Name of the VPC network"
   type        = string
@@ -186,3 +159,10 @@ variable "labels" {
 #  type        = string
 #}
 
+
+
+variable "page_builder_image" {
+  description = "The container image to deploy"
+  type        = string
+  default     = "docker.io/deepthought42/page-builder:latest"
+}

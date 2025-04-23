@@ -7,16 +7,17 @@ provider "google" {
 # Create the VPC network
 resource "google_compute_network" "vpc" {
   name                    = var.vpc_name
-  auto_create_subnetworks = false
-  description            = "Custom VPC network"
+  description            = "WebCrawler VPC network"
 }
 
-# Create a subnet in the VPC
-resource "google_compute_subnetwork" "subnet" {
-  name          = "${var.vpc_name}-subnet"
-  ip_cidr_range = var.subnet_cidr
-  network       = google_compute_network.vpc.id
-  region        = var.region
+resource "google_vpc_access_connector" "connector" {
+  name   = "cloud-run-connector"
+  region = var.region
+  network = google_compute_network.vpc.name
+  ip_cidr_range = "10.8.0.0/28"
+  min_instances = 2
+  max_instances = 3
+  machine_type = "e2-micro"
 }
 
 # Create a service account for VPC management

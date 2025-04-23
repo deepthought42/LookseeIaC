@@ -15,7 +15,8 @@ module "cloud_run" {
   labels = local.resource_labels
   pubsub_topics = var.pubsub_topics
   service_account_email = var.service_account_email
-  
+  vpc_connector_name = var.vpc_connector_name
+  topic_id = var.topic_id
   #secrets = {
   #  for secret in var.secrets : secret.env_var => {
   #    secret_id = secret.secret_id
@@ -24,13 +25,18 @@ module "cloud_run" {
   #}
 }
 
-module "pubsub_topic" {
-  source                = "../../atoms/pubsub/topic"
-  project_id            = var.project_id
-  topic_name            = var.topic_name
-  service_account_email = var.service_account_email
-  #perimeter_id          = var.perimeter_id
-  labels                = var.labels
+resource "google_pubsub_topic" "$${var.topic_name}_topic" {
+  name    = var.topic_name
+  project = var.project_id
+
+  # Optional: Add labels if you want to organize/identify your resources
+  labels = var.labels
+
+  message_storage_policy {
+    allowed_persistence_regions = [
+      var.region
+    ]
+  }
 }
 
 module "pubsub_subscription" {

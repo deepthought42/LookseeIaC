@@ -13,7 +13,7 @@ resource "google_cloud_run_service" "api" {
     spec {
       containers {
         # Using the latest image from Artifact Registry
-        image = "${var.region}-docker.pkg.dev/${var.project_id}/api/api:latest"
+        image = "docker.io/deepthought42/crawler-api:latest"
 
         # Add environment variables from secrets
         env {

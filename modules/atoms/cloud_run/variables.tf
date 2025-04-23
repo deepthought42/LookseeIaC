@@ -26,6 +26,7 @@ variable "image" {
 variable "pubsub_topics" {
   description = "Map of PubSub topic names to publish messages to"
   type        = map(string)
+  default     = {}
 }
 
 variable "service_account_email" {
@@ -36,4 +37,14 @@ variable "service_account_email" {
 variable "labels" {
   description = "Environment labels"
   type        = map(string)
+}
+
+variable "topic_id" {
+  description = "The ID of the PubSub topic to subscribe to"
+  type        = string
+}
+
+variable "vpc_connector_name" {
+  description = "The name of the VPC connector to use"
+  type        = string
 }
