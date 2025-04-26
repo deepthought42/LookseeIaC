@@ -6,6 +6,11 @@ variable "environment" {
   description = "The environment"
 }
 
+variable "service_account_email" {
+  description = "Service account email"
+  type        = string
+}
+
 variable "neo4j_password" {
   description = "Password for Neo4j database"
   type        = string

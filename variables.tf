@@ -129,9 +129,16 @@ variable "credentials_file" {
   type        = string
 }
 
-variable "service_name" {
-  description = "Name of the Cloud Run service"
+variable "page_builder_image" {
+  description = "The container image to deploy"
   type        = string
+  default     = "docker.io/deepthought42/page-builder:latest"
+}
+
+variable "api_image" {
+  description = "Container image to deploy"
+  type        = string
+  default     = "docker.io/deepthought42/crawler-api:latest"
 }
 
 variable "vpc_name" {
@@ -149,6 +156,7 @@ variable "labels" {
   type        = map(string)
 }
 
+
 #variable "access_policy_id" {
 #  description = "Access policy ID"
 #  type        = string
@@ -158,11 +166,3 @@ variable "labels" {
 #  description = "VPC access level"
 #  type        = string
 #}
-
-
-
-variable "page_builder_image" {
-  description = "The container image to deploy"
-  type        = string
-  default     = "docker.io/deepthought42/page-builder:latest"
-}

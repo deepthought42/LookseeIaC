@@ -48,3 +48,9 @@ variable "vpc_connector_name" {
   description = "The name of the VPC connector to use"
   type        = string
 }
+
+variable "port" {
+  description = "The port to run the service on"
+  type        = number
+  default     = 8080
+}

@@ -39,22 +39,22 @@ output "neo4j_db_name_secret_name" {
   value       = google_secret_manager_secret.neo4j_db_name.name
 }
 
-output "auth0_client_secret_id" {
+output "auth0_client_secret_secret_id" {
   description = "The ID of the Auth0 client secret"
   value       = google_secret_manager_secret.auth0_client_secret.id
 }
 
-output "auth0_client_secret_name" {
+output "auth0_client_secret_secret_name" {
   description = "The name of the Auth0 client secret"
   value       = google_secret_manager_secret.auth0_client_secret.name
 }
 
-output "auth0_client_id_id" {
+output "auth0_client_id_secret_id" {
   description = "The ID of the Auth0 client id"
   value       = google_secret_manager_secret.auth0_client_id.id
 }
 
-output "auth0_client_id_name" {
+output "auth0_client_id_secret_name" {
   description = "The name of the Auth0 client id"
   value       = google_secret_manager_secret.auth0_client_id.name
 }
@@ -79,6 +79,21 @@ output "pusher_key_secret_name" {
   value       = google_secret_manager_secret.pusher_key.name
 }
 
+output "pusher_cluster_secret_id" {
+  description = "The ID of the Pusher cluster secret"
+  value       = google_secret_manager_secret.pusher_cluster.id
+}
+
+output "pusher_cluster_secret_name" {
+  description = "The name of the Pusher cluster secret"
+  value       = google_secret_manager_secret.pusher_cluster.name
+}
+
+
+
+
+
+# SMTP Password Secret
 output "smtp_password_secret_id" {
   description = "The ID of the SMTP password secret"
   value       = google_secret_manager_secret.smtp_password.id
