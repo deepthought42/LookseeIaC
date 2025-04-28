@@ -33,23 +33,23 @@ module "pubsub_topics" {
   page_audit_topic_name = "page_audit"
   journey_verified_topic_name = "journey_verified"
   journey_discarded_topic_name = "journey_discarded"
-  journey_candidate_topic_name = "journey_candidate"
-  audit_update_topic_name = "audit_update"
-  journey_completion_cleanup_topic_name = "journey_completion_cleanup"
   audit_error_topic_name = "audit_error"
+  audit_update_topic_name = "audit_update"
+  journey_candidate_topic_name = "journey_candidate"
+  journey_completion_cleanup_topic_name = "journey_completion_cleanup"
 }
 
+variable "environment_variables" {
+  description = "Map of environment variables to set"
+  type        = map(string)
+  default     = {}
+}
 # Secrets module
 module "secrets" {
   source = "./secrets"
   project_id  = var.project_id
   environment = var.environment
   service_account_email = google_service_account.cloud_run_sa.email
-  
-  auth0_client_secret = var.auth0_client_secret
-  auth0_client_id = var.auth0_client_id
-  auth0_domain = var.auth0_domain
-  auth0_audience = var.auth0_audience
 
   neo4j_password = var.neo4j_password
   neo4j_bolt_uri = var.neo4j_bolt_uri
@@ -89,6 +89,24 @@ module "secrets" {
 #
 ###############################
 
+# API module
+module "api" {
+  source = "./api"
+  project_id  = var.project_id
+  region     = var.region
+  environment = var.environment
+  service_name = "api"
+  service_account_email = google_service_account.cloud_run_sa.email
+  vpc_connector_name = module.vpc.vpc_connector_name
+  url_topic_name = module.pubsub_topics.url_topic_name
+  pubsub_topics = {
+    "pubsub.url_topic": module.pubsub_topics.url_topic_name,
+    "pubsub.discarded_journey_topic": module.pubsub_topics.journey_discarded_topic_name,
+    "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name
+  }
+  memory_allocation = "1Gi"
+}
+
 # Page Builder Cloud Run module
 module "page_builder_cloud_run" {
   source                = "./modules/atoms/cloud_run"
@@ -108,25 +126,168 @@ module "page_builder_cloud_run" {
                             "spring.cloud.gcp.project-id": var.project_id,
                             "spring.cloud.gcp.region": var.region
                           }
+  environment_variables = {
+    "spring.data.neo4j.database": [module.secrets.neo4j_db_name_secret_name, "latest"],
+    "spring.data.neo4j.username": [module.secrets.neo4j_username_secret_name, "latest"],
+    "spring.data.neo4j.password": [module.secrets.neo4j_password_secret_name, "latest"],
+    "spring.data.neo4j.uri": [module.secrets.neo4j_bolt_uri_secret_name, "latest"],
+  }
+                          
+  vpc_connector_name    = module.vpc.vpc_connector_name
+}
+
+module "audit_manager_cloud_run" {
+  source                = "./modules/atoms/cloud_run"
+  project_id            = var.project_id
+  environment           = var.environment
+  service_name          = "audit-manager"
+  image                 = var.audit_manager_image
+  region                = var.region
+  topic_id              = module.pubsub_topics.page_created_topic_id
+  labels                = { "environment" = var.environment, "application" = "audit-manager" }
+  service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_topics         = {
+                            "pubsub.audit_update": module.pubsub_topics.audit_update_topic_name,
+                            "pubsub.page_audit_topic": module.pubsub_topics.page_audit_topic_name,
+                            "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name,
+                            "spring.cloud.gcp.project-id": var.project_id,
+                            "spring.cloud.gcp.region": var.region
+                          }
+  environment_variables = {
+    "spring.data.neo4j.database": [module.secrets.neo4j_db_name_secret_name, "latest"],
+    "spring.data.neo4j.username": [module.secrets.neo4j_username_secret_name, "latest"],
+    "spring.data.neo4j.password": [module.secrets.neo4j_password_secret_name, "latest"],
+    "spring.data.neo4j.uri": [module.secrets.neo4j_bolt_uri_secret_name, "latest"],
+  }
+  vpc_connector_name    = module.vpc.vpc_connector_name
+}
+
+module "journey_executor_cloud_run" {
+  source                = "./modules/atoms/cloud_run"
+  project_id            = var.project_id
+  environment           = var.environment
+  service_name          = "journey-executor"
+  image                 = var.journey_executor_image
+  region                = var.region
+  topic_id              = module.pubsub_topics.journey_candidate_topic_id
+  labels                = { "environment" = var.environment, "application" = "journey-executor" }
+  service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_topics         = {
+                            "pubsub.page_built": module.pubsub_topics.page_created_topic_name,
+                            "pubsub.journey_verified": module.pubsub_topics.journey_verified_topic_name,
+                            "pubsub.discard_journey_topic": module.pubsub_topics.journey_discarded_topic_name,
+                            "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name,
+                            "spring.cloud.gcp.project-id": var.project_id,
+                            "spring.cloud.gcp.region": var.region
+                          }
+  environment_variables = {
+    "spring.data.neo4j.database": [module.secrets.neo4j_db_name_secret_name, "latest"],
+    "spring.data.neo4j.username": [module.secrets.neo4j_username_secret_name, "latest"],
+    "spring.data.neo4j.password": [module.secrets.neo4j_password_secret_name, "latest"],
+    "spring.data.neo4j.uri": [module.secrets.neo4j_bolt_uri_secret_name, "latest"],
+  }
 
   vpc_connector_name    = module.vpc.vpc_connector_name
 }
 
-
-
-# API module
-module "api" {
-  source = "./api"
-  project_id  = var.project_id
-  region     = var.region
-  environment = var.environment
-  service_name = "api"
+module "journey_expander_cloud_run" {
+  source                = "./modules/atoms/cloud_run"
+  project_id            = var.project_id
+  environment           = var.environment
+  service_name          = "journey-expander"
+  image                 = var.journey_expander_image
+  region                = var.region
+  topic_id              = module.pubsub_topics.journey_verified_topic_id
+  labels                = { "environment" = var.environment, "application" = "journey-expander" }
   service_account_email = google_service_account.cloud_run_sa.email
-  vpc_connector_name = module.vpc.vpc_connector_name
-  url_topic_name = module.pubsub_topics.url_topic_name
-  pubsub_topics = {
-    "pubsub.url_topic": module.pubsub_topics.url_topic_name,
-    "pubsub.discarded_journey_topic": module.pubsub_topics.journey_discarded_topic_name,
-    "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name
+  pubsub_topics         = {
+                            "pubsub.page_built": module.pubsub_topics.page_created_topic_name,
+                            "pubsub.journey_verified": module.pubsub_topics.journey_verified_topic_name,
+                            "pubsub.discard_journey_topic": module.pubsub_topics.journey_discarded_topic_name,
+                            "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name,
+                            "spring.cloud.gcp.project-id": var.project_id,
+                            "spring.cloud.gcp.region": var.region
+                          }
+  environment_variables = {
+    "spring.data.neo4j.database": [module.secrets.neo4j_db_name_secret_name, "latest"],
+    "spring.data.neo4j.username": [module.secrets.neo4j_username_secret_name, "latest"],
+    "spring.data.neo4j.password": [module.secrets.neo4j_password_secret_name, "latest"],
+    "spring.data.neo4j.uri": [module.secrets.neo4j_bolt_uri_secret_name, "latest"],
   }
+  vpc_connector_name    = module.vpc.vpc_connector_name
+}
+
+module "content_audit_cloud_run" {
+  source                = "./modules/atoms/cloud_run"
+  project_id            = var.project_id
+  environment           = var.environment
+  service_name          = "content-audit"
+  image                 = var.content_audit_image
+  region                = var.region
+  topic_id              = module.pubsub_topics.page_audit_topic_id
+  labels                = { "environment" = var.environment, "application" = "content-audit" }
+  service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_topics         = {
+                            "pubsub.audit_update": module.pubsub_topics.audit_update_topic_name,
+                            "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name,
+                            "spring.cloud.gcp.project-id": var.project_id,
+                            "spring.cloud.gcp.region": var.region
+                          }
+  environment_variables = {
+    "spring.data.neo4j.database": [module.secrets.neo4j_db_name_secret_name, "latest"],
+    "spring.data.neo4j.username": [module.secrets.neo4j_username_secret_name, "latest"],
+    "spring.data.neo4j.password": [module.secrets.neo4j_password_secret_name, "latest"],
+    "spring.data.neo4j.uri": [module.secrets.neo4j_bolt_uri_secret_name, "latest"],
+  }
+  vpc_connector_name    = module.vpc.vpc_connector_name
+}
+
+module "visual_design_audit_cloud_run" {
+  source                = "./modules/atoms/cloud_run"
+  project_id            = var.project_id
+  environment           = var.environment
+  service_name          = "visual-design-audit"
+  image                 = var.visual_design_audit_image
+  region                = var.region
+  topic_id              = module.pubsub_topics.page_audit_topic_id
+  labels                = { "environment" = var.environment, "application" = "visual-design-audit" }
+  service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_topics         = {
+                            "pubsub.audit_update": module.pubsub_topics.audit_update_topic_name,
+                            "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name,
+                            "spring.cloud.gcp.project-id": var.project_id,
+                            "spring.cloud.gcp.region": var.region
+                          }
+  environment_variables = {
+    "spring.data.neo4j.database": [module.secrets.neo4j_db_name_secret_name, "latest"],
+    "spring.data.neo4j.username": [module.secrets.neo4j_username_secret_name, "latest"],
+    "spring.data.neo4j.password": [module.secrets.neo4j_password_secret_name, "latest"],
+    "spring.data.neo4j.uri": [module.secrets.neo4j_bolt_uri_secret_name, "latest"],
+  }
+  vpc_connector_name    = module.vpc.vpc_connector_name
+}
+
+module "information_architecture_audit_cloud_run" {
+  source                = "./modules/atoms/cloud_run"
+  project_id            = var.project_id
+  environment           = var.environment
+  service_name          = "information-architecture-audit"
+  image                 = var.information_architecture_audit_image
+  region                = var.region
+  topic_id              = module.pubsub_topics.page_audit_topic_id
+  labels                = { "environment" = var.environment, "application" = "information-architecture-audit" }
+  service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_topics         = {
+                            "pubsub.audit_update": module.pubsub_topics.audit_update_topic_name,
+                            "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name,
+                            "spring.cloud.gcp.project-id": var.project_id,
+                            "spring.cloud.gcp.region": var.region
+                          }
+  environment_variables = {
+    "spring.data.neo4j.database": [module.secrets.neo4j_db_name_secret_name, "latest"],
+    "spring.data.neo4j.username": [module.secrets.neo4j_username_secret_name, "latest"],
+    "spring.data.neo4j.password": [module.secrets.neo4j_password_secret_name, "latest"],
+    "spring.data.neo4j.uri": [module.secrets.neo4j_bolt_uri_secret_name, "latest"],
+  }
+  vpc_connector_name    = module.vpc.vpc_connector_name
 }

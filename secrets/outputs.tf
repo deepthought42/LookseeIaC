@@ -39,26 +39,6 @@ output "neo4j_db_name_secret_name" {
   value       = google_secret_manager_secret.neo4j_db_name.name
 }
 
-output "auth0_client_secret_secret_id" {
-  description = "The ID of the Auth0 client secret"
-  value       = google_secret_manager_secret.auth0_client_secret.id
-}
-
-output "auth0_client_secret_secret_name" {
-  description = "The name of the Auth0 client secret"
-  value       = google_secret_manager_secret.auth0_client_secret.name
-}
-
-output "auth0_client_id_secret_id" {
-  description = "The ID of the Auth0 client id"
-  value       = google_secret_manager_secret.auth0_client_id.id
-}
-
-output "auth0_client_id_secret_name" {
-  description = "The name of the Auth0 client id"
-  value       = google_secret_manager_secret.auth0_client_id.name
-}
-
 output "pusher_app_id_secret_id" {
   description = "The ID of the Pusher app ID secret"
   value       = google_secret_manager_secret.pusher_app_id.id

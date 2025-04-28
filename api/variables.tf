@@ -77,3 +77,8 @@ variable "pubsub_topics" {
   description = "Pubsub topics"
   type        = map(string)
 }
+
+variable "memory_allocation" {
+  description = "Memory allocated for cloud run instance"
+  type        = string
+}

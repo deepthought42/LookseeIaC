@@ -25,7 +25,7 @@ resource "google_cloud_run_service" "service" {
         }
 
         env {
-          name = "NEO4J_USERNAME"
+          name = "spring.data.neo4j.username"
           value_from {
             secret_key_ref {
               name = "neo4j-username"
@@ -61,13 +61,34 @@ resource "google_cloud_run_service" "service" {
             value = env.value
           }
         }
+
+        dynamic "env" {
+          for_each = var.environment_variables
+          content {
+            name = env.key
+            value_from {
+              secret_key_ref {
+                name = env.value[0]
+                key  = env.value[1]
+              }
+            }
+          }
+        }
+
+        resources {
+          limits = {
+            memory = var.memory_allocation
+          }
+        }
       }
+      
       service_account_name = var.service_account_email
     }
     metadata {
       annotations = {
         "run.googleapis.com/vpc-access-connector" = var.vpc_connector_name
         "run.googleapis.com/vpc-access-egress"    = "private-ranges-only"
+        "run.googleapis.com/client-name"          = "terraform"
       }
     }
   }

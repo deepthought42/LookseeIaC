@@ -27,15 +27,6 @@ locals {
       version   = "1"
     }
   ]
-
-  auth0_secrets = {
-    "AUTH0_CLIENT_ID" = "projects/${var.project_id}/secrets/Auth0ClientId/versions/1"
-    "AUTH0_CLIENT_SECRET" = "projects/${var.project_id}/secrets/Auth0ClientSecret/versions/1"
-    "AUTH0_ISSUER_BASE_URL" = "projects/${var.project_id}/secrets/Auth0IssuerBaseUrl/versions/1"
-    "AUTH0_AUDIENCE" = "projects/${var.project_id}/secrets/Auth0Audience/versions/1"
-    "AUTH0_DOMAIN" = "projects/${var.project_id}/secrets/Auth0Domain/versions/1"
-    "AUTH0_ISSUER" = "projects/${var.project_id}/secrets/Auth0Issuer/versions/1"
-  }
 }
 
 #variable "secrets" {
@@ -64,6 +55,10 @@ variable "environment" {
   default     = "dev"
 }
 
+#########################
+# Pusher Secrets
+#########################
+
 variable "pusher_key" {
   description = "Pusher API key"
   type        = string
@@ -80,6 +75,16 @@ variable "pusher_cluster" {
   type        = string
 }
 
+variable "pusher_secret" {
+  description = "Pusher secret"
+  type        = string
+  sensitive   = true
+}
+
+#########################
+# SMTP Secrets
+#########################
+
 variable "smtp_password" {
   description = "SMTP password for email service"
   type        = string
@@ -92,16 +97,9 @@ variable "smtp_username" {
   sensitive   = true
 }
 
-variable "auth0_client_id" {
-  description = "Auth0 client ID"
-  type        = string
-}
-
-variable "auth0_client_secret" {
-  description = "Auth0 client secret"
-  type        = string
-  sensitive   = true
-}
+#########################
+# Neo4j Secrets
+#########################
 
 variable "neo4j_password" {
   description = "Neo4j database password"
@@ -124,10 +122,18 @@ variable "neo4j_db_name" {
   type        = string
 }
 
+#########################
+# GCP Service Account
+#########################
+
 variable "credentials_file" {
   description = "Path to GCP service account credentials JSON file"
   type        = string
 }
+
+#########################
+# Cloud Run Images
+#########################
 
 variable "page_builder_image" {
   description = "The container image to deploy"
@@ -140,6 +146,47 @@ variable "api_image" {
   type        = string
   default     = "docker.io/deepthought42/crawler-api:latest"
 }
+
+
+variable "audit_manager_image" {
+  description = "Audit manager container image"
+  type        = string
+  default     = "docker.io/deepthought42/audit-manager:latest"
+}
+
+variable "journey_executor_image" {
+  description = "Journey Executor container image"
+  type        = string
+  default     = "docker.io/deepthought42/journey-executor:latest"
+}
+
+variable "journey_expander_image" {
+  description = "Journey explander container image"
+  type        = string
+  default     = "docker.io/deepthought42/journey-expander:latest"
+}
+
+variable "content_audit_image" {
+  description = "Content audit container image"
+  type        = string
+  default     = "docker.io/deepthought42/content-audit:latest"
+}
+
+variable "visual_design_audit_image" {
+  description = "Visual design audit container image"
+  type        = string
+  default     = "docker.io/deepthought42/visual-design-audit:latest"
+}
+
+variable "information_architecture_audit_image" {
+  description = "Information architecture audit container image"
+  type        = string
+  default     = "docker.io/deepthought42/information-architecture-audit:latest"
+}
+
+#########################
+# VPC
+#########################
 
 variable "vpc_name" {
   description = "Name of the VPC network"
@@ -156,15 +203,6 @@ variable "labels" {
   type        = map(string)
 }
 
-variable "auth0_domain" {
-  description = "Auth0 domain"
-  type        = string
-}
-
-variable "auth0_audience" {
-  description = "Auth0 audience"
-  type        = string
-}
 
 #variable "access_policy_id" {
 #  description = "Access policy ID"

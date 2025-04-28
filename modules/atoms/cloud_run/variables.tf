@@ -54,3 +54,15 @@ variable "port" {
   type        = number
   default     = 8080
 }
+
+variable "memory_allocation" {
+  description = "Memory allocated for cloud run"
+  type        = string
+  default     = "500M"
+}
+
+variable "environment_variables" {
+  description = "Map of environment variables to set"
+  type        = map(string)
+  default     = {}
+}

@@ -22,32 +22,8 @@ resource "google_secret_manager_secret_iam_member" "neo4j_db_name_secret_accesso
   member    = "serviceAccount:${var.service_account_email}"
 }
 
-resource "google_secret_manager_secret_iam_member" "auth0_client_id_secret_accessor" {
-  secret_id = google_secret_manager_secret.auth0_client_id.name
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${var.service_account_email}"
-}
-
-resource "google_secret_manager_secret_iam_member" "auth0_client_secret_secret_accessor" {
-  secret_id = google_secret_manager_secret.auth0_client_secret.name
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${var.service_account_email}"
-}
-
 resource "google_secret_manager_secret_iam_member" "pusher_app_id_secret_accessor" {
   secret_id = google_secret_manager_secret.pusher_app_id.name
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${var.service_account_email}"
-}
-
-resource "google_secret_manager_secret_iam_member" "auth0_domain_secret_accessor" {
-  secret_id = google_secret_manager_secret.auth0_domain.name
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${var.service_account_email}"
-}
-
-resource "google_secret_manager_secret_iam_member" "auth0_audience_secret_accessor" {
-  secret_id = google_secret_manager_secret.auth0_audience.name
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${var.service_account_email}"
 }
