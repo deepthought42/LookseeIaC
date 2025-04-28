@@ -48,6 +48,8 @@ module "secrets" {
   
   auth0_client_secret = var.auth0_client_secret
   auth0_client_id = var.auth0_client_id
+  auth0_domain = var.auth0_domain
+  auth0_audience = var.auth0_audience
 
   neo4j_password = var.neo4j_password
   neo4j_bolt_uri = var.neo4j_bolt_uri

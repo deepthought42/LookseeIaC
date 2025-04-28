@@ -53,12 +53,67 @@ resource "google_cloud_run_service" "api" {
             }
           }
         }
+        env {
+          name = "auth0.domain"
+          value_from {
+            secret_key_ref {
+              name = "auth0-domain"
+              key  = "latest"
+            }
+          }
+        }
 
+        env {
+          name = "auth0.audience"
+          value_from {
+            secret_key_ref {
+              name = "auth0-audience"
+              key  = "latest"
+            }
+          }
+        }
+
+        env {
+          name = "auth0.client_id"
+          value_from {
+            secret_key_ref {
+              name = "auth0-client-id"
+              key  = "latest"
+            }
+          }
+        }
+
+        env {
+          name = "auth0.client_secret"
+          value_from {
+            secret_key_ref {
+              name = "auth0-client-secret"
+              key  = "latest"
+            }
+          }
+        }
+  
+        env {
+          name = "spring.security.oauth2.resourceserver.jwt.issuer-uri"
+
+          value_from {
+            secret_key_ref {
+              name = "auth0-jwt-issuer-uri"
+              key  = "latest"
+            }
+          }
+        }
         dynamic "env" {
           for_each = var.pubsub_topics
           content {
             name  = env.key
             value = env.value
+          }
+        }
+
+        resources {
+          limits = {
+            memory = "1Gi"
           }
         }
       }

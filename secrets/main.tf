@@ -112,6 +112,44 @@ resource "google_secret_manager_secret_version" "auth0_client_id_version" {
   secret_data_wo = var.auth0_client_id
 }
 
+# Auth0 Domain Secret
+resource "google_secret_manager_secret" "auth0_domain" {
+  secret_id = "auth0-domain"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "auth0_domain_version" {
+  secret         = google_secret_manager_secret.auth0_domain.id
+  secret_data_wo = var.auth0_domain
+}
+
+# Auth0 Audience Secret
+resource "google_secret_manager_secret" "auth0_audience" {
+  secret_id = "auth0-audience"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "auth0_audience_version" {
+  secret         = google_secret_manager_secret.auth0_audience.id
+  secret_data_wo = var.auth0_audience
+}
+
 # Pusher App ID Secret
 resource "google_secret_manager_secret" "pusher_app_id" {
   secret_id = "pusher-app-id"

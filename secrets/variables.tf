@@ -47,6 +47,17 @@ variable "auth0_client_secret" {
   sensitive   = true
 }
 
+variable "auth0_domain" {
+  description = "Auth0 domain"
+  type        = string
+}
+
+variable "auth0_audience" {
+  description = "Auth0 audience"
+  type        = string
+}
+
+
 variable "pusher_app_id" {
   description = "Pusher application ID"
   type        = string

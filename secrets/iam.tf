@@ -40,6 +40,18 @@ resource "google_secret_manager_secret_iam_member" "pusher_app_id_secret_accesso
   member    = "serviceAccount:${var.service_account_email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "auth0_domain_secret_accessor" {
+  secret_id = google_secret_manager_secret.auth0_domain.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "auth0_audience_secret_accessor" {
+  secret_id = google_secret_manager_secret.auth0_audience.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
 resource "google_secret_manager_secret_iam_member" "pusher_cluster_secret_accessor" {
   secret_id = google_secret_manager_secret.pusher_cluster.name
   role      = "roles/secretmanager.secretAccessor"

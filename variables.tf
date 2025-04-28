@@ -156,6 +156,15 @@ variable "labels" {
   type        = map(string)
 }
 
+variable "auth0_domain" {
+  description = "Auth0 domain"
+  type        = string
+}
+
+variable "auth0_audience" {
+  description = "Auth0 audience"
+  type        = string
+}
 
 #variable "access_policy_id" {
 #  description = "Access policy ID"
