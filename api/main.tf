@@ -1,9 +1,3 @@
-# Configure the Google Cloud provider with authentication
-provider "google" {
-  project     = var.project_id
-  region      = var.region
-}
-
 # Cloud Run service
 resource "google_cloud_run_service" "api" {
   name     = var.service_name
@@ -13,7 +7,11 @@ resource "google_cloud_run_service" "api" {
     spec {
       containers {
         # Using the latest image from Artifact Registry
-        image = "${var.region}-docker.pkg.dev/${var.project_id}/api/api:latest"
+        image = var.image
+
+        ports {
+          container_port = var.port
+        }
 
         # Add environment variables from secrets
         env {
@@ -55,6 +53,20 @@ resource "google_cloud_run_service" "api" {
             }
           }
         }
+        
+        dynamic "env" {
+          for_each = var.pubsub_topics
+          content {
+            name  = env.key
+            value = env.value
+          }
+        }
+
+        resources {
+          limits = {
+            memory = var.memory_allocation
+          }
+        }
       }
     }
   }
@@ -71,31 +83,6 @@ resource "google_cloud_run_service" "api" {
     percent         = 100
     latest_revision = true
   }
-}
-
-# Add IAM permissions for Cloud Run to access secrets
-resource "google_secret_manager_secret_iam_member" "api_neo4j_password" {
-  secret_id = "neo4j-password"
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_cloud_run_service.api.template[0].spec[0].service_account_name}"
-}
-
-resource "google_secret_manager_secret_iam_member" "api_neo4j_username" {
-  secret_id = "neo4j-username"
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_cloud_run_service.api.template[0].spec[0].service_account_name}"
-}
-
-resource "google_secret_manager_secret_iam_member" "api_neo4j_bolt_uri" {
-  secret_id = "neo4j-bolt-uri"
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_cloud_run_service.api.template[0].spec[0].service_account_name}"
-}
-
-resource "google_secret_manager_secret_iam_member" "api_neo4j_db_name" {
-  secret_id = "neo4j-db-name"
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${google_cloud_run_service.api.template[0].spec[0].service_account_name}"
 }
 
 # IAM policy to make the service public

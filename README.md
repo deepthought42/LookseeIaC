@@ -1,5 +1,22 @@
 # LookseeIaC
 
+# Prerequisites
+
+- GCP account
+- Terraform CLI
+- Google Cloud SDK
+- Node.js
+
+## Enable GCP Services
+
+- PubSub
+- Secret Manager
+- Cloud Run
+- Cloud Build
+- Cloud Run
+
+
+
 # Deployment
 
 Deploying the web crawler involves setting up multiple serverless services that are connected via GCP PubSub. To successfully deploy it, you need to do a few things:
@@ -24,8 +41,6 @@ export TF_VAR_neo4j_password="<NEO4J_PASSWORD>"
 export TF_VAR_neo4j_username="<NEO4J_USERNAME>"
 export TF_VAR_neo4j_bolt_uri="<NEO4J_BOLT_URI>"
 export TF_VAR_neo4j_db_name="<NEO4J_DB_NAME>"
-export TF_VAR_auth0_client_secret="<AUTH0_CLIENT_SECRET>"
-export TF_VAR_auth0_client_id="<AUTH0_CLIENT_ID>"
 
 export TF_VAR_pusher_key="<PUSHER_KEY>"
 export TF_VAR_pusher_app_id="<PUSHER_APP_ID>"

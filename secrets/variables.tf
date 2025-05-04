@@ -6,6 +6,11 @@ variable "environment" {
   description = "The environment"
 }
 
+variable "service_account_email" {
+  description = "Service account email"
+  type        = string
+}
+
 variable "neo4j_password" {
   description = "Password for Neo4j database"
   type        = string
@@ -30,17 +35,6 @@ variable "neo4j_db_name" {
   default     = "neo4j"
 }
 
-variable "auth0_client_id" {
-  description = "Auth0 client id"
-  type        = string
-  sensitive   = true
-}
-
-variable "auth0_client_secret" {
-  description = "Auth0 client secret"
-  type        = string
-  sensitive   = true
-}
 
 variable "pusher_app_id" {
   description = "Pusher application ID"
@@ -56,6 +50,12 @@ variable "pusher_key" {
 
 variable "pusher_cluster" {
   description = "Pusher cluster"
+  type        = string
+  sensitive   = true
+}
+
+variable "pusher_secret" {
+  description = "Pusher secret"
   type        = string
   sensitive   = true
 }
