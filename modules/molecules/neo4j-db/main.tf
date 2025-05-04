@@ -28,7 +28,7 @@ resource "google_compute_instance" "neo4j" {
     # Set any required metadata here
   }
 
-    metadata_startup_script = <<-EOT
+  metadata_startup_script = <<-EOT
     #!/bin/bash
     wget -O - https://debian.neo4j.com/neotechnology.gpg.key | sudo apt-key add -
     echo 'deb https://debian.neo4j.com stable 5' | sudo tee /etc/apt/sources.list.d/neo4j.list
@@ -36,7 +36,7 @@ resource "google_compute_instance" "neo4j" {
     sudo apt-get install -y neo4j
 
     # Download the CQL file to /
-    curl -o /create-indexes-and-constraints.cql https://raw.githubusercontent.com/your-org/your-repo/main/create-indexes-and-constraints.cql
+    curl -o /home/neo4j/create-indexes-and-constraints.cql https://raw.githubusercontent.com/deepthought42/LookseeIaC/refs/heads/main/create-indexes-and-constraints.cql
 
     # Set initial password for neo4j admin user
     sudo systemctl stop neo4j
@@ -62,7 +62,7 @@ resource "google_compute_firewall" "neo4j-internal" {
 
   allow {
     protocol = "tcp"
-    ports    = ["7474", "7687"] # Neo4j HTTP and Bolt ports
+    ports    = ["7474", "7687", "22"] # Neo4j HTTP and Bolt ports and ssh
   }
 
   source_ranges = var.source_ranges # Adjust to your VPC's CIDR

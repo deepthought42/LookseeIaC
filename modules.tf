@@ -102,6 +102,8 @@ module "neo4j_db" {
   source_ranges = ["10.0.0.0/8"]
   tags = ["neo4j"]
   neo4j_password = var.neo4j_password
+  neo4j_username = var.neo4j_username
+  neo4j_db_name = var.neo4j_db_name
 }
 
 ###############################
