@@ -40,6 +40,13 @@ resource "google_secret_manager_secret_iam_member" "pusher_key_secret_accessor" 
   member    = "serviceAccount:${var.service_account_email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "pusher_secret_secret_accessor" {
+  secret_id = google_secret_manager_secret.pusher_secret.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+
 resource "google_secret_manager_secret_iam_member" "smtp_password_secret_accessor" {
   secret_id = google_secret_manager_secret.smtp_password.name
   role      = "roles/secretmanager.secretAccessor"

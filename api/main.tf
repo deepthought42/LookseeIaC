@@ -25,7 +25,7 @@ resource "google_cloud_run_service" "api" {
         }
 
         env {
-          name = "spring.data.neo4j.uri"
+          name = "NEO4J_USERNAME"
           value_from {
             secret_key_ref {
               name = "neo4j-username"

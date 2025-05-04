@@ -63,6 +63,12 @@ variable "memory_allocation" {
 
 variable "environment_variables" {
   description = "Map of environment variables to set"
-  type        = map(string)
+  type        = map(list(string))
   default     = {}
+}
+
+variable "vpc_egress" {
+  description = "The egress of the VPC connector"
+  type        = string
+  default     = "all-traffic"
 }

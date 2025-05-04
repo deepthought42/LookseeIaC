@@ -154,6 +154,12 @@ variable "audit_manager_image" {
   default     = "docker.io/deepthought42/audit-manager:latest"
 }
 
+variable "audit_service_image" {
+  description = "Audit service container image"
+  type        = string
+  default     = "docker.io/deepthought42/audit-update-service:latest"
+}
+
 variable "journey_executor_image" {
   description = "Journey Executor container image"
   type        = string

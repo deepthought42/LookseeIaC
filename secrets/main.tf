@@ -90,7 +90,7 @@ resource "google_secret_manager_secret" "pusher_app_id" {
 
 resource "google_secret_manager_secret_version" "pusher_app_id_version" {
   secret         = google_secret_manager_secret.pusher_app_id.id
-  secret_data_wo = "1149968"
+  secret_data_wo = var.pusher_app_id
 }
 
 # Pusher Production Cluster Secret
@@ -109,7 +109,7 @@ resource "google_secret_manager_secret" "pusher_cluster" {
 
 resource "google_secret_manager_secret_version" "pusher_cluster_version" {
   secret         = google_secret_manager_secret.pusher_cluster.id
-  secret_data_wo = "us2"
+  secret_data_wo = var.pusher_cluster
 }
 
 # Pusher Key Secret
@@ -129,6 +129,25 @@ resource "google_secret_manager_secret" "pusher_key" {
 resource "google_secret_manager_secret_version" "pusher_key_version" {
   secret         = google_secret_manager_secret.pusher_key.id
   secret_data_wo = var.pusher_key
+}
+
+# Pusher Key Secret
+resource "google_secret_manager_secret" "pusher_secret" {
+  secret_id = "pusher-secret"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "pusher_secret_version" {
+  secret         = google_secret_manager_secret.pusher_secret.id
+  secret_data_wo = var.pusher_secret
 }
 
 # SMTP Password Secret

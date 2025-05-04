@@ -62,6 +62,7 @@ module "secrets" {
   pusher_key = var.pusher_key
   pusher_app_id = var.pusher_app_id
   pusher_cluster = var.pusher_cluster
+  pusher_secret = var.pusher_secret
 }
 
 
@@ -118,6 +119,7 @@ module "page_builder_cloud_run" {
   topic_id              = module.pubsub_topics.url_topic_id
   labels                = { "environment" = var.environment, "application" = "page-builder" }
   service_account_email = google_service_account.cloud_run_sa.email
+  memory_allocation = "1Gi"
   pubsub_topics         = {
                             "pubsub.page_built": module.pubsub_topics.page_created_topic_name,
                             "pubsub.page_audit_topic": module.pubsub_topics.page_audit_topic_name,
@@ -132,8 +134,9 @@ module "page_builder_cloud_run" {
     "spring.data.neo4j.password": [module.secrets.neo4j_password_secret_name, "latest"],
     "spring.data.neo4j.uri": [module.secrets.neo4j_bolt_uri_secret_name, "latest"],
   }
-                          
+
   vpc_connector_name    = module.vpc.vpc_connector_name
+  vpc_egress            = "private-ranges-only"
 }
 
 module "audit_manager_cloud_run" {
@@ -162,6 +165,37 @@ module "audit_manager_cloud_run" {
   vpc_connector_name    = module.vpc.vpc_connector_name
 }
 
+module "audit_service_cloud_run" {
+  source                = "./modules/atoms/cloud_run"
+  project_id            = var.project_id
+  environment           = var.environment
+  service_name          = "audit-service"
+  image                 = var.audit_service_image
+  region                = var.region
+  topic_id              = module.pubsub_topics.page_audit_topic_id
+  labels                = { "environment" = var.environment, "application" = "audit-service" }
+  service_account_email = google_service_account.cloud_run_sa.email
+  memory_allocation     = "4Gi"
+  pubsub_topics         = {
+                            "pubsub.audit_update": module.pubsub_topics.audit_update_topic_name,
+                            "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name,
+                            "spring.cloud.gcp.project-id": var.project_id,
+                            "spring.cloud.gcp.region": var.region
+                          }
+  environment_variables = {
+    "spring.data.neo4j.database": [module.secrets.neo4j_db_name_secret_name, "latest"],
+    "spring.data.neo4j.username": [module.secrets.neo4j_username_secret_name, "latest"],
+    "spring.data.neo4j.password": [module.secrets.neo4j_password_secret_name, "latest"],
+    "spring.data.neo4j.uri": [module.secrets.neo4j_bolt_uri_secret_name, "latest"],
+    "pusher.key": [module.secrets.pusher_key_secret_name, "latest"],
+    "pusher.appId": [module.secrets.pusher_app_id_secret_name, "latest"],
+    "pusher.cluster": [module.secrets.pusher_cluster_secret_name, "latest"],
+    "pusher.secret": [module.secrets.pusher_secret_name, "latest"]
+  }
+  vpc_connector_name    = module.vpc.vpc_connector_name
+}
+
+
 module "journey_executor_cloud_run" {
   source                = "./modules/atoms/cloud_run"
   project_id            = var.project_id
@@ -172,10 +206,11 @@ module "journey_executor_cloud_run" {
   topic_id              = module.pubsub_topics.journey_candidate_topic_id
   labels                = { "environment" = var.environment, "application" = "journey-executor" }
   service_account_email = google_service_account.cloud_run_sa.email
+  memory_allocation     = "2Gi"
   pubsub_topics         = {
                             "pubsub.page_built": module.pubsub_topics.page_created_topic_name,
                             "pubsub.journey_verified": module.pubsub_topics.journey_verified_topic_name,
-                            "pubsub.discard_journey_topic": module.pubsub_topics.journey_discarded_topic_name,
+                            "pubsub.discarded_journey_topic": module.pubsub_topics.journey_discarded_topic_name,
                             "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name,
                             "spring.cloud.gcp.project-id": var.project_id,
                             "spring.cloud.gcp.region": var.region

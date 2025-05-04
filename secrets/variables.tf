@@ -54,6 +54,12 @@ variable "pusher_cluster" {
   sensitive   = true
 }
 
+variable "pusher_secret" {
+  description = "Pusher secret"
+  type        = string
+  sensitive   = true
+}
+
 variable "smtp_password" {
   description = "SMTP password"
   type        = string
