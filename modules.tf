@@ -86,6 +86,26 @@ module "secrets" {
 
 ###############################
 #
+#  Neo4j DB module
+#
+###############################
+module "neo4j_db" {
+  source = "./modules/molecules/neo4j-db"
+  project_id = var.project_id
+  vpc_network_name = module.vpc.vpc_name
+  image = "ubuntu-os-cloud/ubuntu-2204-lts"
+  subnet_name = "default"
+  region = var.region
+  zone = "us-central1-a"
+  machine_type = "e2-medium"
+  disk_size = 50
+  source_ranges = ["10.0.0.0/8"]
+  tags = ["neo4j"]
+  neo4j_password = var.neo4j_password
+}
+
+###############################
+#
 #  Cloud Run modules
 #
 ###############################
