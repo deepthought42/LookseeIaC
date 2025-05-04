@@ -52,7 +52,7 @@ module "secrets" {
   service_account_email = google_service_account.cloud_run_sa.email
 
   neo4j_password = var.neo4j_password
-  neo4j_bolt_uri = var.neo4j_bolt_uri
+  neo4j_bolt_uri = "bolt://${module.neo4j_db.private_ip}:7687"
   neo4j_db_name = var.neo4j_db_name
   neo4j_username = var.neo4j_username
 

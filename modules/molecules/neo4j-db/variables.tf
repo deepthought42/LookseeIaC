@@ -66,5 +66,12 @@ variable "neo4j_password" {
     sensitive   = true
 }
 
+variable "neo4j_username" {
+    description = "The username for the neo4j user"
+    type        = string
+}
 
-
+variable "neo4j_db_name" {
+    description = "The name of the neo4j database"
+    type        = string
+}

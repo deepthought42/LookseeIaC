@@ -35,11 +35,23 @@ resource "google_compute_instance" "neo4j" {
     sudo apt-get update
     sudo apt-get install -y neo4j
 
+    # Download the CQL file to /
+    curl -o /create-indexes-and-constraints.cql https://raw.githubusercontent.com/your-org/your-repo/main/create-indexes-and-constraints.cql
+
     # Set initial password for neo4j admin user
     sudo systemctl stop neo4j
     sudo -u neo4j neo4j-admin set-initial-password '${var.neo4j_password}'
     sudo systemctl enable neo4j
     sudo systemctl start neo4j
+
+    # Create a new user with the specified username and password
+    sudo -u neo4j neo4j-admin create-user ${var.neo4j_username} '${var.neo4j_password}'
+
+    # create database
+    sudo -u neo4j neo4j-admin create-database ${var.neo4j_db_name}
+
+    # run file to create indexes and constraints
+    sudo -u neo4j neo4j-admin run /home/neo4j/create-indexes-and-constraints.cql
   EOT
 }
 
