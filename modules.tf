@@ -141,7 +141,10 @@ module "page_builder_cloud_run" {
   topic_id              = module.pubsub_topics.url_topic_id
   labels                = { "environment" = var.environment, "application" = "page-builder" }
   service_account_email = google_service_account.cloud_run_sa.email
-  memory_allocation = "1Gi"
+  cpu_allocation        = "2"
+  memory_allocation     = "4Gi"
+  memory_limit          = "8Gi"
+  cpu_limit             = "4"
   pubsub_topics         = {
                             "pubsub.page_built": module.pubsub_topics.page_created_topic_name,
                             "pubsub.page_audit_topic": module.pubsub_topics.page_audit_topic_name,
@@ -197,7 +200,6 @@ module "audit_service_cloud_run" {
   topic_id              = module.pubsub_topics.page_audit_topic_id
   labels                = { "environment" = var.environment, "application" = "audit-service" }
   service_account_email = google_service_account.cloud_run_sa.email
-  memory_allocation     = "4Gi"
   pubsub_topics         = {
                             "pubsub.audit_update": module.pubsub_topics.audit_update_topic_name,
                             "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name,
@@ -215,6 +217,8 @@ module "audit_service_cloud_run" {
     "pusher.secret": [module.secrets.pusher_secret_name, "latest"]
   }
   vpc_connector_name    = module.vpc.vpc_connector_name
+  memory_allocation     = "2Gi"
+  memory_limit          = "4Gi"
 }
 
 
@@ -229,6 +233,7 @@ module "journey_executor_cloud_run" {
   labels                = { "environment" = var.environment, "application" = "journey-executor" }
   service_account_email = google_service_account.cloud_run_sa.email
   memory_allocation     = "2Gi"
+  memory_limit          = "4Gi"
   pubsub_topics         = {
                             "pubsub.page_built": module.pubsub_topics.page_created_topic_name,
                             "pubsub.journey_verified": module.pubsub_topics.journey_verified_topic_name,
@@ -347,4 +352,6 @@ module "information_architecture_audit_cloud_run" {
     "spring.data.neo4j.uri": [module.secrets.neo4j_bolt_uri_secret_name, "latest"],
   }
   vpc_connector_name    = module.vpc.vpc_connector_name
+  memory_allocation     = "2Gi"
+  memory_limit          = "4Gi"
 }

@@ -61,6 +61,25 @@ variable "memory_allocation" {
   default     = "500M"
 }
 
+variable "cpu_allocation" {
+
+  description = "CPU allocation for cloud run"
+  type        = string
+  default     = "1"
+}
+
+variable "memory_limit" {
+  description = "Memory limit for cloud run"
+  type        = string
+  default     = "4Gi"
+}
+
+variable "cpu_limit" {
+  description = "CPU limit for cloud run"
+  type        = string
+  default     = "2"
+}
+
 variable "environment_variables" {
   description = "Map of environment variables to set"
   type        = map(list(string))

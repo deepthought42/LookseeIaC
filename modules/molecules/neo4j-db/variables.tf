@@ -51,7 +51,7 @@ variable "disk_type" {
 variable "source_ranges" {
     description = "The source ranges"
     type        = list(string)
-    default     = ["10.0.0.0/8", "0.0.0.0/0"]
+    default     = ["0.0.0.0/0"]
 }
 
 variable "tags" {

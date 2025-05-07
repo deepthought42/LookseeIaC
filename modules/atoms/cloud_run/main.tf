@@ -44,7 +44,13 @@ resource "google_cloud_run_service" "service" {
 
         resources {
           limits = {
+            memory = var.memory_limit
+            cpu    = var.cpu_limit
+          }
+
+          requests = {
             memory = var.memory_allocation
+            cpu    = var.cpu_allocation
           }
         }
       }
