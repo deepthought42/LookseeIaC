@@ -63,6 +63,8 @@ module "secrets" {
   pusher_app_id = var.pusher_app_id
   pusher_cluster = var.pusher_cluster
   pusher_secret = var.pusher_secret
+
+  depends_on = [module.neo4j_db]
 }
 
 
@@ -128,6 +130,7 @@ module "api" {
     "pubsub.error_topic": module.pubsub_topics.audit_error_topic_name
   }
   memory_allocation = "1Gi"
+  depends_on = [module.neo4j_db]
 }
 
 # Page Builder Cloud Run module

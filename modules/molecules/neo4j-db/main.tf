@@ -62,9 +62,23 @@ resource "google_compute_firewall" "neo4j-internal" {
 
   allow {
     protocol = "tcp"
-    ports    = ["7474", "7687", "22"] # Neo4j HTTP and Bolt ports and ssh
+    ports    = ["7474", "7687"] # Neo4j HTTP and Bolt ports and ssh
   }
 
   source_ranges = var.source_ranges # Adjust to your VPC's CIDR
-  target_tags   = var.tags
+  target_tags   = var.target_tags
+}
+
+# Firewall rule to allow access only from within the VPC
+resource "google_compute_firewall" "neo4j-iap-ssh" {
+  name    = "neo4j-allow-iap-ssh"
+  network = var.vpc_network_name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["22"] # Neo4j HTTP and Bolt ports and ssh
+  }
+
+  source_ranges = ["35.235.240.0/20"] # Adjust to your VPC's CIDR
+  target_tags   = var.target_tags
 }

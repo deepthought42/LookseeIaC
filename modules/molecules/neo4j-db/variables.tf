@@ -51,8 +51,15 @@ variable "disk_type" {
 variable "source_ranges" {
     description = "The source ranges"
     type        = list(string)
-    default     = ["0.0.0.0/0"]
+    default     = ["10.0.0.0/8", "0.0.0.0/0"]
 }
+
+variable "target_tags" {
+    description = "The target tags"
+    type        = list(string)
+    default     = ["iap-tunnel"]
+}
+
 
 variable "tags" {
     description = "The tags"
@@ -75,3 +82,4 @@ variable "neo4j_db_name" {
     description = "The name of the neo4j database"
     type        = string
 }
+
