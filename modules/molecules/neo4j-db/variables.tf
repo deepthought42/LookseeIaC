@@ -3,16 +3,6 @@ variable "project_id" {
     type        = string
 }
 
-variable "vpc_network_name" {
-    description = "The name of the VPC network"
-    type        = string
-}
-
-variable "subnet_name" {
-    description = "The name of the subnet"
-    type        = string
-}
-
 variable "region" {
     description = "The region"
     type        = string
@@ -23,6 +13,16 @@ variable "zone" {
     description = "The zone"
     type        = string
     default     = "us-central1-a"
+}
+
+variable "vpc_network_name" {
+    description = "The name of the VPC network"
+    type        = string
+}
+
+variable "subnet_name" {
+    description = "The name of the subnet"
+    type        = string
 }
 
 variable "machine_type" {
@@ -83,3 +83,12 @@ variable "neo4j_db_name" {
     type        = string
 }
 
+variable "service_account_email" {
+    description = "The service account email"
+    type        = string
+}
+
+variable "environment" {
+    description = "The environment"
+    type        = string
+}

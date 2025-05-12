@@ -10,12 +10,6 @@ resource "google_secret_manager_secret_iam_member" "neo4j_username_secret_access
   member    = "serviceAccount:${var.service_account_email}"
 }
 
-resource "google_secret_manager_secret_iam_member" "neo4j_bolt_uri_secret_accessor" {
-  secret_id = google_secret_manager_secret.neo4j_bolt_uri.name
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${var.service_account_email}"
-}
-
 resource "google_secret_manager_secret_iam_member" "neo4j_db_name_secret_accessor" {
   secret_id = google_secret_manager_secret.neo4j_db_name.name
   role      = "roles/secretmanager.secretAccessor"

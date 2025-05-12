@@ -23,12 +23,6 @@ variable "neo4j_username" {
   default     = "neo4j"
 }
 
-variable "neo4j_bolt_uri" {
-  description = "Bolt URI for Neo4j database"
-  type        = string
-  default     = "bolt://34.171.187.210:7687"
-}
-
 variable "neo4j_db_name" {
   description = "Database name for Neo4j"
   type        = string

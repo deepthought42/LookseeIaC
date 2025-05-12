@@ -1,13 +1,15 @@
-# Configure the Google Cloud provider
-provider "google" {
-  project = var.project_id
-  region  = var.region
-}
-
 # Create the VPC network
 resource "google_compute_network" "vpc" {
   name                    = var.vpc_name
   description            = "WebCrawler VPC network"
+  auto_create_subnetworks = false
+}
+
+resource "google_compute_subnetwork" "custom_subnet" {
+  name                     = var.subnet_name
+  ip_cidr_range            = var.subnet_cidr
+  region                   = var.region
+  network                  = google_compute_network.vpc.id
 }
 
 resource "google_vpc_access_connector" "connector" {
@@ -20,16 +22,15 @@ resource "google_vpc_access_connector" "connector" {
   machine_type = "e2-micro"
 }
 
-# Create a service account for VPC management
-resource "google_service_account" "vpc_service_account" {
-  account_id   = "vpc-service-account"
-  display_name = "VPC Service Account"
-  description  = "Service account for VPC management"
-}
+# Firewall: IAP SSH
+resource "google_compute_firewall" "ssh_iap" {
+  name    = "${var.vpc_name}-allow-iap-ssh"
+  network = google_compute_network.vpc.name
 
-# Assign necessary IAM roles to the service account
-resource "google_project_iam_member" "vpc_admin" {
-  project = var.project_id
-  role    = "roles/compute.networkAdmin"
-  member  = "serviceAccount:${google_service_account.vpc_service_account.email}"
+  allow {
+    protocol = "tcp"
+    ports    = ["22"]
+  }
+  source_ranges = ["35.235.240.0/20"]
+  target_tags   = ["iap-ssh"]
 }

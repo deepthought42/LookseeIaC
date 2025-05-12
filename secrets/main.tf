@@ -36,25 +36,6 @@ resource "google_secret_manager_secret_version" "neo4j_username_version" {
   secret_data_wo = var.neo4j_username
 }
 
-# Neo4j Bolt URI Secret
-resource "google_secret_manager_secret" "neo4j_bolt_uri" {
-  secret_id = "neo4j-bolt-uri"
-  project   = var.project_id
-
-  labels = {
-    environment = var.environment
-  }
-
-  replication {
-    auto {}
-  }
-}
-
-resource "google_secret_manager_secret_version" "neo4j_bolt_uri_version" {
-  secret         = google_secret_manager_secret.neo4j_bolt_uri.id
-  secret_data_wo = var.neo4j_bolt_uri
-}
-
 # Neo4j Production Database Name Secret
 resource "google_secret_manager_secret" "neo4j_db_name" {
   secret_id = "neo4j-db-name"

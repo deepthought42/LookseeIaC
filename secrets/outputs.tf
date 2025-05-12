@@ -18,16 +18,6 @@ output "neo4j_username_secret_name" {
   value       = google_secret_manager_secret.neo4j_username.secret_id
 }
 
-output "neo4j_bolt_uri_secret_id" {
-  description = "The ID of the neo4j bolt URI secret"
-  value       = google_secret_manager_secret.neo4j_bolt_uri.id
-}
-
-output "neo4j_bolt_uri_secret_name" {
-  description = "The name of the neo4j bolt URI secret"
-  value       = google_secret_manager_secret.neo4j_bolt_uri.secret_id
-}
-
 # Neo4j Production Database Name Secret
 output "neo4j_db_name_secret_id" {
   description = "The ID of the neo4j database name secret"
