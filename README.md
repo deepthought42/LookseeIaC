@@ -38,42 +38,6 @@ This repo is a **Terraform mono‑module** that spins up every Google Cloud reso
 
 ## Architecture
 
-```text
-┌────────────┐          ① new‑crawl job          ┌─────────────┐
-│  Frontend  │  ───────────────────────────────▶ │   Pub/Sub   │
-└────────────┘                                      topic: crawl-requests
-                                                      │
-                                                      ▼
-                                               ┌──────────────┐
-                                               │  Cloud Run   │
-                                               │   crawler    │
-                                               └───────┬──────┘
-                                                       │ pushes URLs
-                                                       ▼
-                        ┌────────────────────────────────────────────────┐
-                        │                Pub/Sub bus                    │
-                        └────────────────┬──────────────────────────────┘
-                                         │
-                                         ▼
-                               ┌──────────────────┐           ┌────────┐
-                               │  Cloud Run       │  writes   │ Neo4j  │
-                               │  accessibility   │──────────▶│  Aura  │
-                               │    auditor       │           └────────┘
-                               └────────┬─────────┘                ▲
-                                        │ creates report           │
-                                        ▼                          │
-                               ┌──────────────────┐   email/json   │
-                               │  Cloud Run       │───────────────▶│
-                               │   notifier       │                │
-                               └──────────────────┘                │
-                                        ▲                          │
-                                        └─────SMTP + Pusher────────┘
-```
-
-1. **crawl‑requests** topic fires whenever the UI (or an API call) asks for a new audit.
-2. **crawler** grabs each URL, snapshots the HTML, and drops a message on `audit‑requests`.
-3. **accessibility‑auditor** chews through WCAG checks, records the result in **Neo4j**, and nudges the **notifier**.
-4. **notifier** sends a real‑time Pusher event plus a summary email through your SMTP server.
 
 Everything is 100 % serverless so you only pay while the containers are awake.
 
