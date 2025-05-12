@@ -21,12 +21,6 @@ variable "vpc_name" {
   default     = "custom-vpc"
 }
 
-variable "subnet_cidr" {
-  description = "CIDR range for the subnet"
-  type        = string
-  default     = "10.0.0.0/24"
-}
-
 variable "labels" {
   description = "Environment labels"
   type        = map(string)
