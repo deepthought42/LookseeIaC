@@ -13,7 +13,7 @@ provider "google" {
 
 # VPC module
 module "vpc" {
-  source = "./modules/atoms/vpc"
+  source = "./modules/vpc"
 
   project_id  = var.project_id
   environment = var.environment
@@ -24,7 +24,7 @@ module "vpc" {
 
 
 module "pubsub_topics" {
-  source                                = "./pubsub_topics"
+  source                                = "./modules/pubsub/pubsub_topics"
   project_id                            = var.project_id
   region                                = var.region
   labels                                = var.labels
@@ -47,7 +47,7 @@ variable "environment_variables" {
 }
 # Secrets module
 module "secrets" {
-  source                = "./secrets"
+  source                = "./modules/secrets"
   project_id            = var.project_id
   environment           = var.environment
   service_account_email = google_service_account.cloud_run_sa.email
@@ -74,7 +74,7 @@ module "secrets" {
 
 # PUBSUB PERIMETER
 #module "pubsub_perimeter" {
-#  source              = "./modules/molecules/security/service_perimeter"
+#  source              = "./modules/security/service_perimeter"
 #  environment         = var.environment
 #  service_name        = var.service_vpcname
 #  access_policy_id    = var.access_policy_id
@@ -92,7 +92,7 @@ module "secrets" {
 #
 ###############################
 module "neo4j_db" {
-  source                = "./modules/molecules/neo4j-db"
+  source                = "./modules/neo4j-db"
   project_id            = var.project_id
   vpc_network_name      = module.vpc.vpc_name
   image                 = "ubuntu-os-cloud/ubuntu-2204-lts"
@@ -118,7 +118,7 @@ module "neo4j_db" {
 
 # API module
 module "api" {
-  source                = "./api"
+  source                = "./modules/api"
   project_id            = var.project_id
   region                = var.region
   environment           = var.environment
@@ -137,7 +137,7 @@ module "api" {
 
 # Page Builder Cloud Run module
 module "page_builder_cloud_run" {
-  source                = "./modules/atoms/cloud_run"
+  source                = "./modules/cloud_run"
   project_id            = var.project_id
   environment           = var.environment
   service_name          = "page-builder"
@@ -170,7 +170,7 @@ module "page_builder_cloud_run" {
 }
 
 module "audit_manager_cloud_run" {
-  source                = "./modules/atoms/cloud_run"
+  source                = "./modules/cloud_run"
   project_id            = var.project_id
   environment           = var.environment
   service_name          = "audit-manager"
@@ -196,7 +196,7 @@ module "audit_manager_cloud_run" {
 }
 
 module "audit_service_cloud_run" {
-  source                = "./modules/atoms/cloud_run"
+  source                = "./modules/cloud_run"
   project_id            = var.project_id
   environment           = var.environment
   service_name          = "audit-service"
@@ -228,7 +228,7 @@ module "audit_service_cloud_run" {
 
 
 module "journey_executor_cloud_run" {
-  source                = "./modules/atoms/cloud_run"
+  source                = "./modules/cloud_run"
   project_id            = var.project_id
   environment           = var.environment
   service_name          = "journey-executor"
@@ -258,7 +258,7 @@ module "journey_executor_cloud_run" {
 }
 
 module "journey_expander_cloud_run" {
-  source                = "./modules/atoms/cloud_run"
+  source                = "./modules/cloud_run"
   project_id            = var.project_id
   environment           = var.environment
   service_name          = "journey-expander"
@@ -285,7 +285,7 @@ module "journey_expander_cloud_run" {
 }
 
 module "content_audit_cloud_run" {
-  source                = "./modules/atoms/cloud_run"
+  source                = "./modules/cloud_run"
   project_id            = var.project_id
   environment           = var.environment
   service_name          = "content-audit"
@@ -310,7 +310,7 @@ module "content_audit_cloud_run" {
 }
 
 module "visual_design_audit_cloud_run" {
-  source                = "./modules/atoms/cloud_run"
+  source                = "./modules/cloud_run"
   project_id            = var.project_id
   environment           = var.environment
   service_name          = "visual-design-audit"
@@ -335,7 +335,7 @@ module "visual_design_audit_cloud_run" {
 }
 
 module "information_architecture_audit_cloud_run" {
-  source                = "./modules/atoms/cloud_run"
+  source                = "./modules/cloud_run"
   project_id            = var.project_id
   environment           = var.environment
   service_name          = "information-architecture-audit"
