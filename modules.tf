@@ -270,7 +270,7 @@ module "journey_expander_cloud_run" {
   pubsub_topics = {
     "pubsub.page_built" : module.pubsub_topics.page_created_topic_name,
     "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_name,
-    "pubsub.discard_journey_topic" : module.pubsub_topics.journey_discarded_topic_name,
+    "pubsub.journey_candidate" : module.pubsub_topics.journey_candidate_topic_name,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
