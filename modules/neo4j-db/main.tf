@@ -15,14 +15,14 @@ resource "google_compute_instance" "neo4j" {
     network    = var.vpc_network_name  # e.g., "default" or your custom VPC
     subnetwork = var.subnet_name       # optional, if using custom subnet
 
-    # No external IP, so only accessible via VPC
+    # Add external IP for internet access
     access_config {
       # Omit this block to prevent external IP assignment
     }
   }
 
-  # Optionally, set tags for firewall rules
-  tags = concat(var.tags, ["iap-ssh"])
+  # Add http-server tag for firewall rule
+  tags = concat(var.tags, ["iap-ssh", "http-server"])
 
   metadata = {
     enable-oslogin = "TRUE"
@@ -31,18 +31,32 @@ resource "google_compute_instance" "neo4j" {
   metadata_startup_script = file("${path.module}/install-neo4j.sh")
 }
 
-# Firewall rule to allow access only from within the VPC
+# Firewall rule for internal VPC access
 resource "google_compute_firewall" "neo4j-internal" {
   name    = "neo4j-allow-internal"
   network = var.vpc_network_name
 
   allow {
     protocol = "tcp"
-    ports    = ["7474", "7687"] # Neo4j HTTP and Bolt ports and ssh
+    ports    = ["7687"] # Neo4j Bolt ports
   }
 
   source_ranges = var.source_ranges # Adjust to your VPC's CIDR
   target_tags   = var.tags
+}
+
+# Firewall rule for internet access to Neo4j HTTP/HTTPS
+resource "google_compute_firewall" "neo4j-allow-internet" {
+  name    = "neo4j-allow-internet"
+  network = var.vpc_network_name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["7474"] # Neo4j HTTP/HTTPS port
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+  target_tags   = ["http-server"]
 }
 
 # 6. IAM binding for IAP Tunnel SSH

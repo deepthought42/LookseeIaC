@@ -281,7 +281,16 @@ Below is a summary of the variables for each module. (For full details, refer to
 ## Module Overview
 
 - **modules/neo4j‑db**: Provisions a Neo4j Community Edition VM (using a startup script to install Neo4j, set an initial password, create a database, and run a CQL schema file (e.g., "create‑indexes‑and‑constraints.cql") at startup). Access is controlled via firewall rules (e.g., SSH via IAP) and VPC.
-- **modules/cloud_run**: Deploys Cloud Run services (with VPC connector, Pub/Sub integration, and secret management) for micro‑services (page builder, journey expander, audit manager, audit service, journey executor, content audit, visual design audit, information architecture audit).
+- **modules/cloud_run**: Deploys Cloud Run services (with VPC connector, Pub/Sub integration, and secret management) for micro‑services 
+    1. Page Builder [https://github.com/deepthought42/PageBuilder]
+    2. Journey Expander [https://github.com/deepthought42/PageBuilder]
+    3. Journey Executor [https://github.com/deepthought42/PageBuilder]
+    4. Audit Manager [https://github.com/deepthought42/PageBuilder]
+    5. Audit Service [https://github.com/deepthought42/PageBuilder]
+    6. Content Audit [https://github.com/deepthought42/PageBuilder]
+    7. Visual Design Audit [https://github.com/deepthought42/PageBuilder]
+    8. Information Architecture Audit [https://github.com/deepthought42/PageBuilder]
+
 - **modules/pubsub**: Manages Pub/Sub topics (e.g., "url", "page‑created", "page‑audit", "journey‑verified", "journey‑discarded", "journey‑candidate", "audit‑update", "journey‑completion‑cleanup", "audit‑error") and push subscriptions (for Cloud Run endpoints).
 - **modules/vpc**: Sets up a VPC (with a custom subnet) and firewall rules (e.g., SSH via IAP, internal traffic for Neo4j, etc.).
 - **modules/secrets**: Manages Secret Manager entries (for Neo4j, SMTP, Pusher, etc.) so that sensitive data is never stored in Terraform state.

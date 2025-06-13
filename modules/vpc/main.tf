@@ -24,7 +24,7 @@ resource "google_vpc_access_connector" "connector" {
 
 # Firewall: IAP SSH
 resource "google_compute_firewall" "ssh_iap" {
-  name    = "${var.vpc_name}-allow-iap-ssh"
+  name    = "allow-iap-ssh"
   network = google_compute_network.vpc.name
 
   allow {
