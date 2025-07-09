@@ -64,6 +64,11 @@ module "secrets" {
   pusher_cluster = var.pusher_cluster
   pusher_secret  = var.pusher_secret
 
+  auth0_client_id     = var.auth0_client_id
+  auth0_client_secret = var.auth0_client_secret
+  auth0_domain        = var.auth0_domain
+  auth0_audience      = var.auth0_audience
+
   depends_on = [module.neo4j_db]
 }
 
