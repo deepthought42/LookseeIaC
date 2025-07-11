@@ -238,6 +238,22 @@ variable "labels" {
   type        = map(string)
 }
 
+#########################
+# Selenium
+#########################
+
+variable "selenium_image" {
+  description = "Selenium image"
+  type        = string
+  default     = "docker.io/selenium/standalone-chrome:3.141.59"
+}
+
+variable "selenium_instance_count" {
+  description = "Number of selenium instances to create"
+  type        = number
+  default     = 1
+}
+
 
 #variable "access_policy_id" {
 #  description = "Access policy ID"
