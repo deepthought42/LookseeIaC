@@ -64,6 +64,11 @@ module "secrets" {
   pusher_cluster = var.pusher_cluster
   pusher_secret  = var.pusher_secret
 
+  auth0_client_id     = var.auth0_client_id
+  auth0_client_secret = var.auth0_client_secret
+  auth0_domain        = var.auth0_domain
+  auth0_audience      = var.auth0_audience
+
   depends_on = [module.neo4j_db]
 }
 
@@ -167,6 +172,8 @@ module "page_builder_cloud_run" {
 
   vpc_connector_name = module.vpc.vpc_connector_name
   vpc_egress         = "private-ranges-only"
+  selenium_urls      = local.selenium_urls
+  depends_on         = [module.selenium_chrome_cloud_run]
 }
 
 module "audit_manager_cloud_run" {
@@ -255,6 +262,8 @@ module "journey_executor_cloud_run" {
   }
 
   vpc_connector_name = module.vpc.vpc_connector_name
+  selenium_urls      = local.selenium_urls
+  depends_on         = [module.selenium_chrome_cloud_run]
 }
 
 module "journey_expander_cloud_run" {
@@ -359,4 +368,24 @@ module "information_architecture_audit_cloud_run" {
   vpc_connector_name = module.vpc.vpc_connector_name
   memory_allocation  = "2Gi"
   memory_limit       = "4Gi"
+}
+
+
+# Selenium modules - Cloud Run (multiple instances)
+module "selenium_chrome_cloud_run" {
+  for_each = { for i in range(var.selenium_instance_count) : i => "selenium-chrome-${i + 1}" }
+  
+  source                = "./modules/selenium"
+  project_id            = var.project_id
+  environment           = var.environment
+  service_name          = each.value
+  image                 = var.selenium_image
+  region                = var.region
+  service_account_email = google_service_account.cloud_run_sa.email
+  memory_allocation     = "2Gi"
+  cpu_allocation        = "1"
+}
+
+locals {
+  selenium_urls = [for m in module.selenium_chrome_cloud_run : m.service_url]
 }

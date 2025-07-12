@@ -91,3 +91,9 @@ variable "vpc_egress" {
   type        = string
   default     = "all-traffic"
 }
+
+variable "selenium_urls" {
+  description = "List of Selenium instance URLs"
+  type        = list(string)
+  default     = []
+}
