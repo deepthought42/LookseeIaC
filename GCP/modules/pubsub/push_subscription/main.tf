@@ -1,9 +1,4 @@
 # This module creates a PubSub subscription that pushes messages to a Cloud Run service
-provider "google" {
-  region = var.region
-  project = var.project_id
-  
-}
 resource "google_pubsub_subscription" "subscription" {
   name    = var.subscription_name
   topic   = var.topic_id
