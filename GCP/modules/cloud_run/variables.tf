@@ -23,12 +23,6 @@ variable "image" {
   type        = string
 }
 
-variable "pubsub_topics" {
-  description = "Map of PubSub topic names to publish messages to"
-  type        = map(string)
-  default     = {}
-}
-
 variable "service_account_email" {
   description = "Email of the service account for the Cloud Run service"
   type        = string
@@ -80,6 +74,12 @@ variable "cpu_limit" {
   default     = "2"
 }
 
+variable "pubsub_topics" {
+  description = "Map of PubSub topic names to publish messages to"
+  type        = map(string)
+  default     = {}
+}
+
 variable "environment_variables" {
   description = "Map of environment variables to set"
   type        = map(list(string))
@@ -91,3 +91,9 @@ variable "vpc_egress" {
   type        = string
   default     = "all-traffic"
 }
+
+variable "pubsub_service_account_email" {
+  description = "Email of the service account for PubSub to invoke Cloud Run"
+  type        = string
+}
+

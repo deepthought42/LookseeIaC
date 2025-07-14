@@ -78,7 +78,9 @@ module "pubsub_subscription" {
   subscription_name     = "${var.service_name}-subscription"
   topic_id              = var.topic_id
   push_endpoint         = google_cloud_run_service.service.status[0].url
-  service_account_email = var.service_account_email
+  service_account_email = var.pubsub_service_account_email
   environment           = var.environment
   service_name          = var.service_name
+  
+  depends_on = [google_cloud_run_service.service]
 }

@@ -167,6 +167,7 @@ module "page_builder_cloud_run" {
   topic_id              = module.pubsub_topics.url_topic_id
   labels                = { "environment" = var.environment, "application" = "page-builder" }
   service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_service_account_email = google_service_account.pubsub_sa.email
   cpu_allocation        = "2"
   memory_allocation     = "4Gi"
   memory_limit          = "8Gi"
@@ -202,6 +203,7 @@ module "audit_manager_cloud_run" {
   topic_id              = module.pubsub_topics.page_created_topic_id
   labels                = { "environment" = var.environment, "application" = "audit-manager" }
   service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
     "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_name,
     "pubsub.page_audit_topic" : module.pubsub_topics.page_audit_topic_name,
@@ -228,6 +230,7 @@ module "audit_service_cloud_run" {
   topic_id              = module.pubsub_topics.page_audit_topic_id
   labels                = { "environment" = var.environment, "application" = "audit-service" }
   service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
     "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_name,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
@@ -260,6 +263,7 @@ module "journey_executor_cloud_run" {
   topic_id              = module.pubsub_topics.journey_candidate_topic_id
   labels                = { "environment" = var.environment, "application" = "journey-executor" }
   service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_service_account_email = google_service_account.pubsub_sa.email
   memory_allocation     = "2Gi"
   memory_limit          = "4Gi"
   pubsub_topics = {
@@ -292,6 +296,7 @@ module "journey_expander_cloud_run" {
   topic_id              = module.pubsub_topics.journey_verified_topic_id
   labels                = { "environment" = var.environment, "application" = "journey-expander" }
   service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
     "pubsub.page_built" : module.pubsub_topics.page_created_topic_name,
     "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_name,
@@ -319,6 +324,7 @@ module "content_audit_cloud_run" {
   topic_id              = module.pubsub_topics.page_audit_topic_id
   labels                = { "environment" = var.environment, "application" = "content-audit" }
   service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
     "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_name,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
@@ -344,6 +350,7 @@ module "visual_design_audit_cloud_run" {
   topic_id              = module.pubsub_topics.page_audit_topic_id
   labels                = { "environment" = var.environment, "application" = "visual-design-audit" }
   service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
     "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_name,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
@@ -369,6 +376,7 @@ module "information_architecture_audit_cloud_run" {
   topic_id              = module.pubsub_topics.page_audit_topic_id
   labels                = { "environment" = var.environment, "application" = "information-architecture-audit" }
   service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
     "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_name,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
