@@ -150,6 +150,32 @@ variable "auth0_audience" {
   sensitive   = true
 }
 
+#########################
+# Auth0 Management API Secrets
+#########################
+
+variable "auth0_management_api_client_id" {
+  description = "Auth0 management API client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth0_management_api_client_secret" {
+  description = "Auth0 management API client secret"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth0_management_api_audience" {
+  description = "Auth0 management API audience"
+  type        = string
+}
+
+variable "auth0_management_api_domain" {
+  description = "Auth0 management API domain"
+  type        = string
+}
+
 
 #########################
 # GCP Service Account

@@ -11,6 +11,7 @@ variable "environment" {
 variable "service_account_email" {
   description = "Service account email"
   type        = string
+  sensitive   = true
 }
 
 variable "neo4j_password" {
@@ -23,12 +24,14 @@ variable "neo4j_username" {
   description = "Username for Neo4j database"
   type        = string
   default     = "neo4j"
+  sensitive   = true
 }
 
 variable "neo4j_db_name" {
   description = "Database name for Neo4j"
   type        = string
   default     = "neo4j"
+  sensitive   = true
 }
 
 
@@ -36,6 +39,7 @@ variable "pusher_app_id" {
   description = "Pusher application ID"
   type        = string
   default     = "1149968"
+  sensitive   = true
 }
 
 variable "pusher_key" {
@@ -68,6 +72,9 @@ variable "smtp_username" {
   sensitive   = true
 }
 
+############################
+# Auth0 Secrets
+############################
 variable "auth0_client_id" {
   description = "Auth0 client ID"
   type        = string
@@ -90,4 +97,34 @@ variable "auth0_audience" {
   description = "Auth0 audience"
   type        = string
   sensitive   = true
+}
+
+variable "auth0_management_api_client_id" {
+  description = "Auth0 management API client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth0_management_api_client_secret" {
+  description = "Auth0 management API client secret"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth0_management_api_audience" {
+  description = "Auth0 management API audience"
+  type        = string
+  sensitive   = true
+}
+
+variable "auth0_management_api_domain" {
+  description = "Auth0 management API domain"
+  type        = string
+  sensitive   = true
+}
+
+variable "selenium_urls" {
+  description = "List of Selenium Cloud Run service URLs"
+  type        = list(string)
+  default     = []
 }

@@ -28,15 +28,6 @@ resource "google_cloud_run_service" "service" {
           }
         }
 
-        # Add selenium URLs as environment variable
-        dynamic "env" {
-          for_each = length(var.selenium_urls) > 0 ? [1] : []
-          content {
-            name  = "SELENIUM_URLS"
-            value = join(",", var.selenium_urls)
-          }
-        }
-
         # Add environment variables from secrets
         dynamic "env" {
           for_each = var.environment_variables
@@ -90,5 +81,4 @@ module "pubsub_subscription" {
   service_account_email = var.service_account_email
   environment           = var.environment
   service_name          = var.service_name
-  region                = var.region
 }

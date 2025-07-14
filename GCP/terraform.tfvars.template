@@ -1,0 +1,79 @@
+# =============================================================================
+# Terraform Variables Template
+# =============================================================================
+# Copy this file to terraform.tfvars and fill in your actual values
+# =============================================================================
+
+# =============================================================================
+# GCP PROJECT CONFIGURATION
+# =============================================================================
+project_id  = "your-gcp-project-id"
+region      = "us-central1"  # Change to your preferred GCP region
+environment = "dev"  # Change to your environment (dev, staging, prod)
+
+# =============================================================================
+# PUSHER CONFIGURATION
+# =============================================================================
+# Get these values from your Pusher dashboard
+pusher_key     = "your-pusher-api-key"
+pusher_app_id  = "your-pusher-app-id"
+pusher_cluster = "your-pusher-cluster-region"
+pusher_secret  = "your-pusher-secret"
+
+# =============================================================================
+# SMTP CONFIGURATION
+# =============================================================================
+# Email service credentials for notifications
+smtp_password = "your-smtp-password"
+smtp_username = "your-smtp-username"
+
+# =============================================================================
+# NEO4J DATABASE CONFIGURATION
+# =============================================================================
+# Neo4j database connection details
+neo4j_password = "your-neo4j-password"
+neo4j_username = "your-neo4j-username"
+neo4j_bolt_uri = "bolt://your-neo4j-instance-ip:7687"
+neo4j_db_name  = "your-neo4j-database-name"
+
+# =============================================================================
+# GCP SERVICE ACCOUNT
+# =============================================================================
+# Path to your GCP service account JSON key file
+credentials_file = "path/to/your/service-account-key.json"
+
+# =============================================================================
+# VPC NETWORK CONFIGURATION
+# =============================================================================
+vpc_name    = "your-vpc-name"
+subnet_cidr = "10.0.0.0/24"  # Change to your preferred subnet CIDR
+
+# =============================================================================
+# RESOURCE LABELS
+# =============================================================================
+labels = {
+  environment = "dev"  # Change to match your environment
+  project     = "your-project-name"
+  team        = "your-team-name"
+}
+
+# =============================================================================
+# AUTH0 CONFIGURATION
+# =============================================================================
+# Auth0 application settings
+auth0_domain = "your-tenant.auth0.com"
+auth0_audience = "https://api.your-domain.com"
+auth0_client_id = "your-auth0-client-id"
+auth0_client_secret = "your-auth0-client-secret"
+
+# Auth0 Management API settings (for advanced features)
+auth0_management_api_client_id = "your-management-api-client-id"
+auth0_management_api_client_secret = "your-management-api-client-secret"
+auth0_management_api_audience = "https://api.your-domain.com"
+auth0_management_api_domain = "your-tenant.auth0.com"
+
+# =============================================================================
+# SELENIUM CONFIGURATION
+# =============================================================================
+# Number of Selenium instances to create
+selenium_instance_count = 1  # Increase for higher load handling

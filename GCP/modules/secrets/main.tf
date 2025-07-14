@@ -168,3 +168,166 @@ resource "google_secret_manager_secret_version" "smtp_username_version" {
   secret         = google_secret_manager_secret.smtp_username.id
   secret_data_wo = var.smtp_username
 }
+
+resource "google_secret_manager_secret" "auth0_domain" {
+  secret_id = "auth0-domain"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "auth0_domain_version" {
+  secret         = google_secret_manager_secret.auth0_domain.id
+  secret_data_wo = var.auth0_domain
+}
+
+resource "google_secret_manager_secret" "auth0_audience" {
+  secret_id = "auth0-audience"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "auth0_audience_version" {
+  secret         = google_secret_manager_secret.auth0_audience.id
+  secret_data_wo = var.auth0_audience
+}
+
+resource "google_secret_manager_secret" "auth0_client_id" {
+  secret_id = "auth0-client-id"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "auth0_client_id_version" {
+  secret         = google_secret_manager_secret.auth0_client_id.id
+  secret_data_wo = var.auth0_client_id
+}
+
+resource "google_secret_manager_secret" "auth0_client_secret" {
+  secret_id = "auth0-client-secret"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "auth0_client_secret_version" {
+  secret         = google_secret_manager_secret.auth0_client_secret.id
+  secret_data_wo = var.auth0_client_secret
+}
+
+resource "google_secret_manager_secret" "auth0_management_api_client_id" {
+  secret_id = "auth0-management-api-client-id"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "auth0_management_api_client_id_version" {
+  secret         = google_secret_manager_secret.auth0_management_api_client_id.id
+  secret_data_wo = var.auth0_management_api_client_id
+}
+
+resource "google_secret_manager_secret" "auth0_management_api_client_secret" {
+  secret_id = "auth0-management-api-client-secret"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "auth0_management_api_client_secret_version" {
+  secret         = google_secret_manager_secret.auth0_management_api_client_secret.id
+  secret_data_wo = var.auth0_management_api_client_secret
+}
+
+resource "google_secret_manager_secret" "auth0_management_api_audience" {
+  secret_id = "auth0-management-api-audience"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "auth0_management_api_audience_version" {
+  secret         = google_secret_manager_secret.auth0_management_api_audience.id
+  secret_data_wo = var.auth0_management_api_audience
+}
+
+resource "google_secret_manager_secret" "auth0_management_api_domain" {
+  secret_id = "auth0-management-api-domain"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "auth0_management_api_domain_version" {
+  secret         = google_secret_manager_secret.auth0_management_api_domain.id
+  secret_data_wo = var.auth0_management_api_domain
+}
+
+# Selenium URLs Secret
+resource "google_secret_manager_secret" "selenium_urls" {
+  secret_id = "selenium-urls"
+  project   = var.project_id
+
+  labels = {
+    environment = var.environment
+  }
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "selenium_urls_version" {
+  secret         = google_secret_manager_secret.selenium_urls.id
+  secret_data_wo = jsonencode(var.selenium_urls)
+}

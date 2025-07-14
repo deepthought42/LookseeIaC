@@ -68,8 +68,14 @@ module "secrets" {
   auth0_client_secret = var.auth0_client_secret
   auth0_domain        = var.auth0_domain
   auth0_audience      = var.auth0_audience
+  auth0_management_api_client_id = var.auth0_management_api_client_id
+  auth0_management_api_client_secret = var.auth0_management_api_client_secret
+  auth0_management_api_audience = var.auth0_management_api_audience
+  auth0_management_api_domain = var.auth0_management_api_domain
+  
+  selenium_urls = local.selenium_urls
 
-  depends_on = [module.neo4j_db]
+  depends_on = [module.neo4j_db, module.selenium_chrome_cloud_run]
 }
 
 
@@ -136,6 +142,16 @@ module "api" {
     "pubsub.discarded_journey_topic" : module.pubsub_topics.journey_discarded_topic_name,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name
   }
+  environment_variables = {
+    "auth0.domain" : [module.secrets.auth0_domain_secret_name, "latest"],
+    "auth0.audience" : [module.secrets.auth0_audience_secret_name, "latest"],
+    "auth0.client-id" : [module.secrets.auth0_client_id_secret_name, "latest"],
+    "auth0.client-secret" : [module.secrets.auth0_client_secret_secret_name, "latest"],
+    "auth0.management-api-client-id" : [module.secrets.auth0_management_api_client_id_secret_name, "latest"],
+    "auth0.management-api-client-secret" : [module.secrets.auth0_management_api_client_secret_secret_name, "latest"],
+    "auth0.management-api-audience" : [module.secrets.auth0_management_api_audience_secret_name, "latest"],
+    "auth0.management-api-domain" : [module.secrets.auth0_management_api_domain_secret_name, "latest"]
+  }
   memory_allocation = "1Gi"
   depends_on        = [module.neo4j_db, module.secrets]
 }
@@ -168,11 +184,11 @@ module "page_builder_cloud_run" {
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
     "spring.data.neo4j.uri" : [module.neo4j_db.neo4j_bolt_uri_secret_name, "latest"],
+    "selenium.urls" : [module.secrets.selenium_urls_secret_name, "latest"],
   }
 
   vpc_connector_name = module.vpc.vpc_connector_name
   vpc_egress         = "private-ranges-only"
-  selenium_urls      = local.selenium_urls
   depends_on         = [module.selenium_chrome_cloud_run]
 }
 
@@ -259,10 +275,10 @@ module "journey_executor_cloud_run" {
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
     "spring.data.neo4j.uri" : [module.neo4j_db.neo4j_bolt_uri_secret_name, "latest"],
+    "selenium.urls" : [module.secrets.selenium_urls_secret_name, "latest"],
   }
 
   vpc_connector_name = module.vpc.vpc_connector_name
-  selenium_urls      = local.selenium_urls
   depends_on         = [module.selenium_chrome_cloud_run]
 }
 

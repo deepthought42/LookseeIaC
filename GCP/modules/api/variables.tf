@@ -82,3 +82,9 @@ variable "memory_allocation" {
   description = "Memory allocated for cloud run instance"
   type        = string
 }
+
+variable "environment_variables" {
+  description = "Map of environment variables to set"
+  type        = map(list(string))
+  default     = {}
+}
