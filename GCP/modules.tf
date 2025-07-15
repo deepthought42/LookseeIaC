@@ -78,24 +78,53 @@ module "secrets" {
   depends_on = [module.neo4j_db, module.selenium_chrome_cloud_run]
 }
 
+###############################
+#
+#  Storage Bucket
+#
+###############################
+resource "google_storage_bucket" "looksee_data" {
+  name                        = "lookseeData"
+  location                    = var.region
+  force_destroy              = true
+  public_access_prevention   = "inherited"
+  uniform_bucket_level_access = false
 
+  labels = local.resource_labels
 
+  versioning {
+    enabled = true
+  }
 
+  lifecycle_rule {
+    condition {
+      age = 365
+    }
+    action {
+      type = "Delete"
+    }
+  }
+}
 
+# Make the bucket publicly readable
+resource "google_storage_bucket_iam_binding" "looksee_data_public_read" {
+  bucket = google_storage_bucket.looksee_data.name
+  role   = "roles/storage.objectViewer"
+  
+  members = [
+    "allUsers",
+  ]
+}
 
-# PUBSUB PERIMETER
-#module "pubsub_perimeter" {
-#  source              = "./modules/security/service_perimeter"
-#  environment         = var.environment
-#  service_name        = var.service_vpcname
-#  access_policy_id    = var.access_policy_id
-#  perimeter_name      = "crawler-perimeter"
-#  project_numbers     = [data.google_project.project.number]
-#  restricted_services = ["pubsub.googleapis.com"]
-#  allowed_services    = ["pubsub.googleapis.com"]
-#  access_level_names  = [var.vpc_access_level]
-#}
-
+# Allow the Cloud Run service account to write to the bucket
+resource "google_storage_bucket_iam_binding" "looksee_data_cloud_run_write" {
+  bucket = google_storage_bucket.looksee_data.name
+  role   = "roles/storage.objectAdmin"
+  
+  members = [
+    "serviceAccount:${google_service_account.cloud_run_sa.email}",
+  ]
+}
 
 ###############################
 #
@@ -138,9 +167,9 @@ module "api" {
   vpc_connector_name    = module.vpc.vpc_connector_name
   url_topic_name        = module.pubsub_topics.url_topic_name
   pubsub_topics = {
-    "pubsub.url_topic" : module.pubsub_topics.url_topic_name,
-    "pubsub.discarded_journey_topic" : module.pubsub_topics.journey_discarded_topic_name,
-    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name
+    "pubsub.url_topic" : module.pubsub_topics.url_topic_id,
+    "pubsub.discarded_journey_topic" : module.pubsub_topics.journey_discarded_topic_id,
+    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id
   }
   environment_variables = {
     "auth0.domain" : [module.secrets.auth0_domain_secret_name, "latest"],
@@ -153,7 +182,7 @@ module "api" {
     "auth0.management-api-domain" : [module.secrets.auth0_management_api_domain_secret_name, "latest"]
   }
   memory_allocation = "1Gi"
-  depends_on        = [module.neo4j_db, module.secrets]
+  depends_on        = [module.neo4j_db, module.secrets, google_storage_bucket.looksee_data]
 }
 
 # Page Builder Cloud Run module
@@ -173,10 +202,10 @@ module "page_builder_cloud_run" {
   memory_limit          = "8Gi"
   cpu_limit             = "4"
   pubsub_topics = {
-    "pubsub.page_built" : module.pubsub_topics.page_created_topic_name,
-    "pubsub.page_audit_topic" : module.pubsub_topics.page_audit_topic_name,
-    "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_name,
-    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
+    "pubsub.page_built" : module.pubsub_topics.page_created_topic_id,
+    "pubsub.page_audit_topic" : module.pubsub_topics.page_audit_topic_id,
+    "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_id,
+    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
   }
@@ -190,7 +219,7 @@ module "page_builder_cloud_run" {
 
   vpc_connector_name = module.vpc.vpc_connector_name
   vpc_egress         = "private-ranges-only"
-  depends_on         = [module.selenium_chrome_cloud_run]
+  depends_on         = [module.selenium_chrome_cloud_run, google_storage_bucket.looksee_data]
 }
 
 module "audit_manager_cloud_run" {
@@ -205,11 +234,12 @@ module "audit_manager_cloud_run" {
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
-    "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_name,
-    "pubsub.page_audit_topic" : module.pubsub_topics.page_audit_topic_name,
-    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
+    "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_id,
+    "pubsub.page_audit_topic" : module.pubsub_topics.page_audit_topic_id,
+    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name,
   }
   environment_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
@@ -218,6 +248,7 @@ module "audit_manager_cloud_run" {
     "spring.data.neo4j.uri" : [module.neo4j_db.neo4j_bolt_uri_secret_name, "latest"],
   }
   vpc_connector_name = module.vpc.vpc_connector_name
+  depends_on         = [google_storage_bucket.looksee_data]
 }
 
 module "audit_service_cloud_run" {
@@ -232,8 +263,8 @@ module "audit_service_cloud_run" {
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
-    "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_name,
-    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
+    "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_id,
+    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
   }
@@ -250,6 +281,7 @@ module "audit_service_cloud_run" {
   vpc_connector_name = module.vpc.vpc_connector_name
   memory_allocation  = "2Gi"
   memory_limit       = "4Gi"
+  depends_on         = [google_storage_bucket.looksee_data]
 }
 
 
@@ -267,10 +299,10 @@ module "journey_executor_cloud_run" {
   memory_allocation     = "2Gi"
   memory_limit          = "4Gi"
   pubsub_topics = {
-    "pubsub.page_built" : module.pubsub_topics.page_created_topic_name,
-    "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_name,
-    "pubsub.discarded_journey_topic" : module.pubsub_topics.journey_discarded_topic_name,
-    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
+    "pubsub.page_built" : module.pubsub_topics.page_created_topic_id,
+    "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_id,
+    "pubsub.discarded_journey_topic" : module.pubsub_topics.journey_discarded_topic_id,
+    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
   }
@@ -283,7 +315,7 @@ module "journey_executor_cloud_run" {
   }
 
   vpc_connector_name = module.vpc.vpc_connector_name
-  depends_on         = [module.selenium_chrome_cloud_run]
+  depends_on         = [module.selenium_chrome_cloud_run, google_storage_bucket.looksee_data]
 }
 
 module "journey_expander_cloud_run" {
@@ -298,10 +330,10 @@ module "journey_expander_cloud_run" {
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
-    "pubsub.page_built" : module.pubsub_topics.page_created_topic_name,
-    "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_name,
-    "pubsub.journey_candidate" : module.pubsub_topics.journey_candidate_topic_name,
-    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
+    "pubsub.page_built" : module.pubsub_topics.page_created_topic_id,
+    "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_id,
+    "pubsub.journey_candidate" : module.pubsub_topics.journey_candidate_topic_id,
+    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
   }
@@ -312,6 +344,7 @@ module "journey_expander_cloud_run" {
     "spring.data.neo4j.uri" : [module.neo4j_db.neo4j_bolt_uri_secret_name, "latest"],
   }
   vpc_connector_name = module.vpc.vpc_connector_name
+  depends_on         = [google_storage_bucket.looksee_data]
 }
 
 module "content_audit_cloud_run" {
@@ -326,8 +359,8 @@ module "content_audit_cloud_run" {
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
-    "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_name,
-    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
+    "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_id,
+    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
   }
@@ -338,6 +371,7 @@ module "content_audit_cloud_run" {
     "spring.data.neo4j.uri" : [module.neo4j_db.neo4j_bolt_uri_secret_name, "latest"],
   }
   vpc_connector_name = module.vpc.vpc_connector_name
+  depends_on         = [google_storage_bucket.looksee_data]
 }
 
 module "visual_design_audit_cloud_run" {
@@ -352,8 +386,8 @@ module "visual_design_audit_cloud_run" {
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
-    "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_name,
-    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
+    "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_id,
+    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
   }
@@ -364,6 +398,7 @@ module "visual_design_audit_cloud_run" {
     "spring.data.neo4j.uri" : [module.neo4j_db.neo4j_bolt_uri_secret_name, "latest"],
   }
   vpc_connector_name = module.vpc.vpc_connector_name
+  depends_on         = [google_storage_bucket.looksee_data]
 }
 
 module "information_architecture_audit_cloud_run" {
@@ -378,8 +413,8 @@ module "information_architecture_audit_cloud_run" {
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
   pubsub_topics = {
-    "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_name,
-    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_name,
+    "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_id,
+    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
   }
@@ -392,6 +427,7 @@ module "information_architecture_audit_cloud_run" {
   vpc_connector_name = module.vpc.vpc_connector_name
   memory_allocation  = "2Gi"
   memory_limit       = "4Gi"
+  depends_on         = [google_storage_bucket.looksee_data]
 }
 
 
