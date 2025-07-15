@@ -84,7 +84,7 @@ module "secrets" {
 #
 ###############################
 resource "google_storage_bucket" "looksee_data" {
-  name                        = "lookseeData"
+  name                        = "looksee-data-${var.environment}"
   location                    = var.region
   force_destroy              = true
   public_access_prevention   = "inherited"
