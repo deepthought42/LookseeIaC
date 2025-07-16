@@ -166,12 +166,13 @@ module "api" {
   service_account_email = google_service_account.cloud_run_sa.email
   vpc_connector_name    = module.vpc.vpc_connector_name
   url_topic_name        = module.pubsub_topics.url_topic_name
-  pubsub_topics = {
+  environment_variables = {
     "pubsub.url_topic" : module.pubsub_topics.url_topic_id,
     "pubsub.discarded_journey_topic" : module.pubsub_topics.journey_discarded_topic_id,
-    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id
+    "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name
   }
-  environment_variables = {
+  secrets_variables = {
     "auth0.domain" : [module.secrets.auth0_domain_secret_name, "latest"],
     "auth0.audience" : [module.secrets.auth0_audience_secret_name, "latest"],
     "auth0.client-id" : [module.secrets.auth0_client_id_secret_name, "latest"],
@@ -181,7 +182,6 @@ module "api" {
     "auth0.management-api-audience" : [module.secrets.auth0_management_api_audience_secret_name, "latest"],
     "auth0.management-api-domain" : [module.secrets.auth0_management_api_domain_secret_name, "latest"]
   }
-  memory_allocation = "1Gi"
   depends_on        = [module.neo4j_db, module.secrets, google_storage_bucket.looksee_data]
 }
 
@@ -201,15 +201,16 @@ module "page_builder_cloud_run" {
   memory_allocation     = "4Gi"
   memory_limit          = "8Gi"
   cpu_limit             = "4"
-  pubsub_topics = {
+  environment_variables = {
     "pubsub.page_built" : module.pubsub_topics.page_created_topic_id,
     "pubsub.page_audit_topic" : module.pubsub_topics.page_audit_topic_id,
     "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_id,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
-    "spring.cloud.gcp.region" : var.region
+    "spring.cloud.gcp.region" : var.region,
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name
   }
-  environment_variables = {
+  secrets_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
@@ -233,15 +234,15 @@ module "audit_manager_cloud_run" {
   labels                = { "environment" = var.environment, "application" = "audit-manager" }
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
-  pubsub_topics = {
+  environment_variables = {
     "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_id,
     "pubsub.page_audit_topic" : module.pubsub_topics.page_audit_topic_id,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
-    "spring.cloud.gcp.region" : var.region
-    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name,
+    "spring.cloud.gcp.region" : var.region,
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name
   }
-  environment_variables = {
+  secrets_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
@@ -262,13 +263,14 @@ module "audit_service_cloud_run" {
   labels                = { "environment" = var.environment, "application" = "audit-service" }
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
-  pubsub_topics = {
+  environment_variables = {
     "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_id,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
-    "spring.cloud.gcp.region" : var.region
+    "spring.cloud.gcp.region" : var.region,
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name
   }
-  environment_variables = {
+  secrets_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
@@ -298,15 +300,16 @@ module "journey_executor_cloud_run" {
   pubsub_service_account_email = google_service_account.pubsub_sa.email
   memory_allocation     = "2Gi"
   memory_limit          = "4Gi"
-  pubsub_topics = {
+  environment_variables = {
     "pubsub.page_built" : module.pubsub_topics.page_created_topic_id,
     "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_id,
     "pubsub.discarded_journey_topic" : module.pubsub_topics.journey_discarded_topic_id,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
-    "spring.cloud.gcp.region" : var.region
+    "spring.cloud.gcp.region" : var.region,
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name
   }
-  environment_variables = {
+  secrets_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
@@ -329,15 +332,16 @@ module "journey_expander_cloud_run" {
   labels                = { "environment" = var.environment, "application" = "journey-expander" }
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
-  pubsub_topics = {
+  environment_variables = {
     "pubsub.page_built" : module.pubsub_topics.page_created_topic_id,
     "pubsub.journey_verified" : module.pubsub_topics.journey_verified_topic_id,
     "pubsub.journey_candidate" : module.pubsub_topics.journey_candidate_topic_id,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name,
   }
-  environment_variables = {
+  secrets_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
@@ -358,13 +362,14 @@ module "content_audit_cloud_run" {
   labels                = { "environment" = var.environment, "application" = "content-audit" }
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
-  pubsub_topics = {
+  environment_variables = {
     "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_id,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
-    "spring.cloud.gcp.region" : var.region
+    "spring.cloud.gcp.region" : var.region,
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name
   }
-  environment_variables = {
+  secrets_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
@@ -385,13 +390,14 @@ module "visual_design_audit_cloud_run" {
   labels                = { "environment" = var.environment, "application" = "visual-design-audit" }
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
-  pubsub_topics = {
+  environment_variables = {
     "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_id,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
-    "spring.cloud.gcp.region" : var.region
+    "spring.cloud.gcp.region" : var.region,
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name
   }
-  environment_variables = {
+  secrets_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
@@ -412,13 +418,14 @@ module "information_architecture_audit_cloud_run" {
   labels                = { "environment" = var.environment, "application" = "information-architecture-audit" }
   service_account_email = google_service_account.cloud_run_sa.email
   pubsub_service_account_email = google_service_account.pubsub_sa.email
-  pubsub_topics = {
+  environment_variables = {
     "pubsub.audit_update" : module.pubsub_topics.audit_update_topic_id,
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
-    "spring.cloud.gcp.region" : var.region
+    "spring.cloud.gcp.region" : var.region,
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name
   }
-  environment_variables = {
+  secrets_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],

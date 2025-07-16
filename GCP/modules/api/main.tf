@@ -55,16 +55,34 @@ resource "google_cloud_run_service" "api" {
         }
         
         dynamic "env" {
-          for_each = var.pubsub_topics
+          for_each = var.environment_variables
           content {
-            name  = env.key
+            name  = env.keypubsub_
             value = env.value
           }
         }
 
+        dynamic "env" {
+          for_each = var.secrets_variables
+          content {
+            name = env.key
+            value_from {
+              secret_key_ref {
+                name = env.value[0]
+                key  = env.value[1]
+              }
+            }
+          }
+        }
+
         resources {
-          limits = {
+          requests = {
             memory = var.memory_allocation
+            cpu = var.cpu_allocation
+          }
+          limits = {
+            memory = var.memory_limit
+            cpu = var.cpu_limit
           }
         }
       }

@@ -74,14 +74,14 @@ variable "cpu_limit" {
   default     = "2"
 }
 
-variable "pubsub_topics" {
-  description = "Map of PubSub topic names to publish messages to"
+variable "environment_variables" {
+  description = "Map of environment variables to set"
   type        = map(string)
   default     = {}
 }
 
-variable "environment_variables" {
-  description = "Map of environment variables to set"
+variable "secrets_variables" {
+  description = "Map of secrets variables to set"
   type        = map(list(string))
   default     = {}
 }

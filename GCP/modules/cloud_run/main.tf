@@ -21,7 +21,7 @@ resource "google_cloud_run_service" "service" {
         }
 
         dynamic "env" {
-          for_each = var.pubsub_topics
+          for_each = var.environment_variables
           content {
             name  = env.key
             value = env.value
@@ -30,7 +30,7 @@ resource "google_cloud_run_service" "service" {
 
         # Add environment variables from secrets
         dynamic "env" {
-          for_each = var.environment_variables
+          for_each = var.secrets_variables
           content {
             name = env.key
             value_from {

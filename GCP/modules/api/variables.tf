@@ -73,18 +73,45 @@ variable "neo4j_db_name_secret" {
   default     = "neo4j-db-name"
 }
 
-variable "pubsub_topics" {
-  description = "Pubsub topics"
+################################
+# ENVIRONMENT VARIABLES
+################################
+
+variable "environment_variables" {
+  description = "Environment variables"
   type        = map(string)
 }
+
+variable "secrets_variables" {
+  description = "Map of secrets variables to set"
+  type        = map(list(string))
+  default     = {}
+}
+
+################################
+# Instance configuration
+################################
 
 variable "memory_allocation" {
   description = "Memory allocated for cloud run instance"
   type        = string
+  default     = "1Gi"
 }
 
-variable "environment_variables" {
-  description = "Map of environment variables to set"
-  type        = map(list(string))
-  default     = {}
+variable "cpu_allocation" {
+  description = "CPU allocated for cloud run instance"
+  type        = string
+  default     = "0.5"
+}
+
+variable "memory_limit" {
+  description = "Memory allocated for cloud run instance"
+  type        = string
+  default     = "2Gi"
+}
+
+variable "cpu_limit" {
+  description = "CPU allocated for cloud run instance"
+  type        = string
+  default     = "1"
 }
