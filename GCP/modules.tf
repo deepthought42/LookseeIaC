@@ -209,13 +209,13 @@ module "page_builder_cloud_run" {
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region,
     "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name
+    "selenium.urls" : module.secrets.selenium_urls_secret_name
   }
   secrets_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
     "spring.data.neo4j.uri" : [module.neo4j_db.neo4j_bolt_uri_secret_name, "latest"],
-    "selenium.urls" : [module.secrets.selenium_urls_secret_name, "latest"],
   }
 
   vpc_connector_name = module.vpc.vpc_connector_name
@@ -307,14 +307,14 @@ module "journey_executor_cloud_run" {
     "pubsub.error_topic" : module.pubsub_topics.audit_error_topic_id,
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region,
-    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name
+    "gcp.storage.bucket.name" : google_storage_bucket.looksee_data.name,
+    "selenium.urls" : module.secrets.selenium_urls_secret_name
   }
   secrets_variables = {
     "spring.data.neo4j.database" : [module.secrets.neo4j_db_name_secret_name, "latest"],
     "spring.data.neo4j.username" : [module.secrets.neo4j_username_secret_name, "latest"],
     "spring.data.neo4j.password" : [module.secrets.neo4j_password_secret_name, "latest"],
     "spring.data.neo4j.uri" : [module.neo4j_db.neo4j_bolt_uri_secret_name, "latest"],
-    "selenium.urls" : [module.secrets.selenium_urls_secret_name, "latest"],
   }
 
   vpc_connector_name = module.vpc.vpc_connector_name

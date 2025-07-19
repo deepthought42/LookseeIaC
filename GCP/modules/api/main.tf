@@ -57,7 +57,7 @@ resource "google_cloud_run_service" "api" {
         dynamic "env" {
           for_each = var.environment_variables
           content {
-            name  = env.keypubsub_
+            name  = env.key
             value = env.value
           }
         }

@@ -315,7 +315,7 @@ resource "google_secret_manager_secret_version" "auth0_management_api_domain_ver
 
 # Selenium URLs Secret
 resource "google_secret_manager_secret" "selenium_urls" {
-  secret_id = "selenium-urls"
+  secret_id = "seleniumurls"
   project   = var.project_id
 
   labels = {
