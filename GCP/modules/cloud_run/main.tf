@@ -73,6 +73,8 @@ resource "google_cloud_run_service" "service" {
 }
 
 module "pubsub_subscription" {
+  count = var.topic_id != null ? 1 : 0
+
   source                = "../pubsub/push_subscription"
   project_id            = var.project_id
   subscription_name     = "${var.service_name}-subscription"

@@ -34,8 +34,14 @@ variable "labels" {
 }
 
 variable "topic_id" {
-  description = "The ID of the PubSub topic to subscribe to"
+  description = "The ID of the PubSub topic to subscribe to (optional)"
   type        = string
+  default     = null
+  
+  validation {
+    condition = var.topic_id == null || length(var.topic_id) > 0
+    error_message = "If provided, topic_id must not be empty."
+  }
 }
 
 variable "vpc_connector_name" {
@@ -52,7 +58,7 @@ variable "port" {
 variable "memory_allocation" {
   description = "Memory allocated for cloud run"
   type        = string
-  default     = "500M"
+  default     = "2Gi"
 }
 
 variable "cpu_allocation" {

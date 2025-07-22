@@ -437,6 +437,38 @@ module "information_architecture_audit_cloud_run" {
   depends_on         = [google_storage_bucket.looksee_data]
 }
 
+# User interface module
+module "user_interface_cloud_run" {
+  source                = "./modules/cloud_run"
+  project_id            = var.project_id
+  environment           = var.environment
+  service_name          = "user-interface"
+  image                 = var.user_interface_image
+  region                = var.region
+  labels                = { "environment" = var.environment, "application" = "user-interface" }
+  service_account_email = google_service_account.cloud_run_sa.email
+  pubsub_service_account_email = google_service_account.pubsub_sa.email
+  environment_variables = {
+    "spring.cloud.gcp.project-id" : var.project_id,
+    "spring.cloud.gcp.region" : var.region
+  }
+  secrets_variables = {
+    "auth0.domain" : [module.secrets.auth0_domain_secret_name, "latest"],
+    "auth0.audience" : [module.secrets.auth0_audience_secret_name, "latest"],
+    "auth0.client-id" : [module.secrets.auth0_client_id_secret_name, "latest"],
+    "auth0.client-secret" : [module.secrets.auth0_client_secret_secret_name, "latest"],
+    "auth0.management-api-client-id" : [module.secrets.auth0_management_api_client_id_secret_name, "latest"],
+    "auth0.management-api-client-secret" : [module.secrets.auth0_management_api_client_secret_secret_name, "latest"],
+    "auth0.management-api-audience" : [module.secrets.auth0_management_api_audience_secret_name, "latest"],
+    "auth0.management-api-domain" : [module.secrets.auth0_management_api_domain_secret_name, "latest"]
+  }
+  vpc_connector_name = module.vpc.vpc_connector_name
+  memory_allocation  = "500Mi"
+  memory_limit       = "1Gi"
+  cpu_allocation     = "0.5"
+  cpu_limit          = "1"
+}
+
 
 # Selenium modules - Cloud Run (multiple instances)
 module "selenium_chrome_cloud_run" {

@@ -245,6 +245,12 @@ variable "information_architecture_audit_image" {
   default     = "docker.io/deepthought42/information-architecture-audit:latest"
 }
 
+variable "user_interface_image" {
+  description = "User interface container image"
+  type        = string
+  default     = "docker.io/deepthought42/user-interface:latest"
+}
+
 #########################
 # VPC
 #########################
@@ -290,3 +296,8 @@ variable "selenium_instance_count" {
 #  description = "VPC access level"
 #  type        = string
 #}
+
+variable "domain_name" {
+  description = "Domain name"
+  type        = string
+}
