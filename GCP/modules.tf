@@ -40,11 +40,6 @@ module "pubsub_topics" {
   journey_completion_cleanup_topic_name = "journey_completion_cleanup"
 }
 
-variable "environment_variables" {
-  description = "Map of environment variables to set"
-  type        = map(string)
-  default     = {}
-}
 # Secrets module
 module "secrets" {
   source                = "./modules/secrets"
@@ -448,22 +443,23 @@ module "user_interface_cloud_run" {
   labels                = { "environment" = var.environment, "application" = "user-interface" }
   service_account_email = google_service_account.cloud_run_sa.email
   environment_variables = {
-    "spring.cloud.gcp.project-id" : var.project_id,
-    "spring.cloud.gcp.region" : var.region
+    "GOOGLE_CLOUD_PROJECT" : var.project_id,
+    "REGION" : var.region,
+    "ENVIRONMENT" : var.environment,
+    "AUTH0_REDIRECT_URI": var.auth0_redirect_uri,
+    "AUTH0_ERROR_PATH": var.auth0_error_path,
+    "AUTH0_APP_URI" : var.auth0_app_uri,
+    "AUTH0_API_URI" : var.auth0_api_uri,
+    "AUTH0_AUDIENCE" : var.auth0_audience,
+    "AUTH0_DOMAIN" : var.auth0_domain,
+    "PUSHER_CLUSTER" : var.pusher_cluster,
+    "PUSHER_APP_ID" : var.pusher_app_id
   }
   secrets_variables = {
-    "auth0.domain" : [module.secrets.auth0_domain_secret_name, "latest"],
-    "auth0.audience" : [module.secrets.auth0_audience_secret_name, "latest"],
-    "auth0.client-id" : [module.secrets.auth0_client_id_secret_name, "latest"],
-    "auth0.client-secret" : [module.secrets.auth0_client_secret_secret_name, "latest"],
-    "auth0.management-api-client-id" : [module.secrets.auth0_management_api_client_id_secret_name, "latest"],
-    "auth0.management-api-client-secret" : [module.secrets.auth0_management_api_client_secret_secret_name, "latest"],
-    "auth0.management-api-audience" : [module.secrets.auth0_management_api_audience_secret_name, "latest"],
-    "auth0.management-api-domain" : [module.secrets.auth0_management_api_domain_secret_name, "latest"]
-    "pusher.key" : [module.secrets.pusher_key_secret_name, "latest"],
-    "pusher.appId" : [module.secrets.pusher_app_id_secret_name, "latest"],
-    "pusher.cluster" : [module.secrets.pusher_cluster_secret_name, "latest"],
-    "pusher.secret" : [module.secrets.pusher_secret_name, "latest"]
+    "AUTH0_CLIENT_ID" : [module.secrets.auth0_client_id_secret_name, "latest"],
+    "AUTH0_CLIENT_SECRET" : [module.secrets.auth0_client_secret_secret_name, "latest"],
+    "PUSHER_KEY" : [module.secrets.pusher_key_secret_name, "latest"],
+    "PUSHER_SECRET" : [module.secrets.pusher_secret_name, "latest"]
   }
   vpc_connector_name = module.vpc.vpc_connector_name
   memory_allocation  = "500Mi"

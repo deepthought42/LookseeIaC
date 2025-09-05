@@ -141,13 +141,37 @@ variable "auth0_client_secret" {
 variable "auth0_domain" {
   description = "Auth0 domain"
   type        = string
-  sensitive   = true
+  sensitive   = false
 }
 
 variable "auth0_audience" {
   description = "Auth0 audience"
   type        = string
-  sensitive   = true
+  sensitive   = false
+}
+
+variable "auth0_redirect_uri" {
+  description = "Auth0 redirect URI"
+  type        = string
+  sensitive   = false
+}
+
+variable "auth0_error_path" {
+  description = "Auth0 error path"
+  type        = string
+  sensitive   = false
+}
+
+variable "auth0_app_uri" {
+  description = "Auth0 app URI"
+  type        = string
+  sensitive   = false
+}
+
+variable "auth0_api_uri" {
+  description = "Auth0 api URI"
+  type        = string
+  sensitive   = false
 }
 
 #########################
