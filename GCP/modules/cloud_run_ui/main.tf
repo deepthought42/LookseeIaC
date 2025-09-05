@@ -71,16 +71,3 @@ resource "google_cloud_run_service" "service" {
     latest_revision = true
   }
 }
-
-module "pubsub_subscription" {
-  source                = "../pubsub/push_subscription"
-  project_id            = var.project_id
-  subscription_name     = "${var.service_name}-subscription"
-  topic_id              = var.topic_id
-  push_endpoint         = google_cloud_run_service.service.status[0].url
-  service_account_email = var.pubsub_service_account_email
-  environment           = var.environment
-  service_name          = var.service_name
-  
-  depends_on = [google_cloud_run_service.service]
-}

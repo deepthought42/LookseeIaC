@@ -33,12 +33,6 @@ variable "labels" {
   type        = map(string)
 }
 
-variable "topic_id" {
-  description = "The ID of the PubSub topic to subscribe to (optional)"
-  type        = string
-  default     = null
-}
-
 variable "vpc_connector_name" {
   description = "The name of the VPC connector to use"
   type        = string
@@ -92,9 +86,3 @@ variable "vpc_egress" {
   type        = string
   default     = "all-traffic"
 }
-
-variable "pubsub_service_account_email" {
-  description = "Email of the service account for PubSub to invoke Cloud Run"
-  type        = string
-}
-

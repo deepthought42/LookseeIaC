@@ -439,7 +439,7 @@ module "information_architecture_audit_cloud_run" {
 
 # User interface module
 module "user_interface_cloud_run" {
-  source                = "./modules/cloud_run"
+  source                = "./modules/cloud_run_ui"
   project_id            = var.project_id
   environment           = var.environment
   service_name          = "user-interface"
@@ -447,7 +447,6 @@ module "user_interface_cloud_run" {
   region                = var.region
   labels                = { "environment" = var.environment, "application" = "user-interface" }
   service_account_email = google_service_account.cloud_run_sa.email
-  pubsub_service_account_email = google_service_account.pubsub_sa.email
   environment_variables = {
     "spring.cloud.gcp.project-id" : var.project_id,
     "spring.cloud.gcp.region" : var.region
@@ -461,6 +460,10 @@ module "user_interface_cloud_run" {
     "auth0.management-api-client-secret" : [module.secrets.auth0_management_api_client_secret_secret_name, "latest"],
     "auth0.management-api-audience" : [module.secrets.auth0_management_api_audience_secret_name, "latest"],
     "auth0.management-api-domain" : [module.secrets.auth0_management_api_domain_secret_name, "latest"]
+    "pusher.key" : [module.secrets.pusher_key_secret_name, "latest"],
+    "pusher.appId" : [module.secrets.pusher_app_id_secret_name, "latest"],
+    "pusher.cluster" : [module.secrets.pusher_cluster_secret_name, "latest"],
+    "pusher.secret" : [module.secrets.pusher_secret_name, "latest"]
   }
   vpc_connector_name = module.vpc.vpc_connector_name
   memory_allocation  = "500Mi"
