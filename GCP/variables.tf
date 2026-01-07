@@ -322,6 +322,7 @@ variable "selenium_instance_count" {
 #}
 
 variable "domain_name" {
-  description = "Domain name"
+  description = "Custom domain name for the UI service (e.g., app.example.com). If not provided, domain mapping will be skipped."
   type        = string
+  default     = null
 }

@@ -468,6 +468,25 @@ module "user_interface_cloud_run" {
   cpu_limit          = "1"
 }
 
+# Custom domain mapping for UI service (with automatic SSL certificate)
+# Google Cloud Run automatically provisions SSL certificates for domain mappings
+resource "google_cloud_run_domain_mapping" "ui_domain" {
+  count    = var.domain_name != null ? 1 : 0
+  name     = var.domain_name
+  location = var.region
+  project  = var.project_id
+
+  metadata {
+    namespace = var.project_id
+    labels    = local.resource_labels
+  }
+
+  spec {
+    route_name = module.user_interface_cloud_run.service_name
+  }
+
+  depends_on = [module.user_interface_cloud_run]
+}
 
 # Selenium modules - Cloud Run (multiple instances)
 module "selenium_chrome_cloud_run" {

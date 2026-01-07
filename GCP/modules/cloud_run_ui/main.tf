@@ -6,7 +6,7 @@ resource "google_cloud_run_service" "service" {
 
   metadata {
     annotations = {
-      "run.googleapis.com/ingress" = "internal"
+      "run.googleapis.com/ingress" = "all"
     }
   }
 
@@ -70,4 +70,12 @@ resource "google_cloud_run_service" "service" {
     percent         = 100
     latest_revision = true
   }
+}
+
+# IAM policy to make the service public
+resource "google_cloud_run_service_iam_member" "public_access" {
+  service  = google_cloud_run_service.service.name
+  location = google_cloud_run_service.service.location
+  role     = "roles/run.invoker"
+  member   = "allUsers"
 }

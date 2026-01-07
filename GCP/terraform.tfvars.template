@@ -72,6 +72,38 @@ auth0_management_api_client_secret = "your-management-api-client-secret"
 auth0_management_api_audience = "https://api.your-domain.com"
 auth0_management_api_domain = "your-tenant.auth0.com"
 
+# Auth0 UI Configuration (required for user interface service)
+auth0_redirect_uri = "https://app.your-domain.com/callback"  # OAuth callback URL
+auth0_error_path = "/error"  # Path for Auth0 error handling
+auth0_app_uri = "https://app.your-domain.com"  # Your application URI
+auth0_api_uri = "https://api.your-domain.com"  # Your API URI
+
+# =============================================================================
+# CUSTOM DOMAIN CONFIGURATION
+# =============================================================================
+# Optional: Custom domain name for the UI service
+# If provided, Terraform will create a domain mapping with automatic SSL certificate
+# Leave as null to use only the Cloud Run default URL
+# Example: "app.example.com" or "ui.yourdomain.com"
+domain_name = null  # Set to your domain name, e.g., "app.example.com"
+
+# =============================================================================
+# CONTAINER IMAGE CONFIGURATION
+# =============================================================================
+# Container images for each service (optional - defaults are provided)
+# Uncomment and modify if you need to use custom images
+# page_builder_image = "docker.io/deepthought42/page-builder:latest"
+# api_image = "docker.io/deepthought42/crawler-api:latest"
+# audit_manager_image = "docker.io/deepthought42/audit-manager:latest"
+# audit_service_image = "docker.io/deepthought42/audit-update-service:latest"
+# journey_executor_image = "docker.io/deepthought42/journey-executor:latest"
+# journey_expander_image = "docker.io/deepthought42/journey-expander:latest"
+# content_audit_image = "docker.io/deepthought42/content-audit:latest"
+# visual_design_audit_image = "docker.io/deepthought42/visual-design-audit:latest"
+# information_architecture_audit_image = "docker.io/deepthought42/information-architecture-audit:latest"
+# user_interface_image = "docker.io/deepthought42/user-interface:latest"
+# selenium_image = "docker.io/selenium/standalone-chrome:3.141.59"
+
 # =============================================================================
 # SELENIUM CONFIGURATION
 # =============================================================================
