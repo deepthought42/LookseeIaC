@@ -61,6 +61,9 @@ Configure the following secrets in your GitHub repository:
 
 #### Optional Configuration
 - `TF_VAR_selenium_instance_count` - Number of Selenium instances (default: `1`)
+- `TF_VAR_selenium_max_sessions` - Maximum concurrent sessions per Selenium instance (default: `1`)
+  - Total concurrent sessions = `selenium_instance_count × selenium_max_sessions`
+  - Example: 10 instances × 4 sessions = 40 total concurrent sessions
 - `TF_VAR_domain_name` - Custom domain name for UI service (e.g., `looksee.com`) - Optional
 - `TF_VAR_project_name` - Project name for labels (default: `looksee`)
 - `TF_VAR_team_name` - Team name for labels (default: `devops`)
