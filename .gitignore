@@ -1,6 +1,18 @@
+# Terraform state files (should use remote backend)
 terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.backup
+*.tfstate.*
+
+# Terraform variable files (contain sensitive data)
+terraform.tfvars
+*.tfvars
+
+# Terraform directories
 .terraform*
 .terraform/
 */.terraform/
-*.tfvars
+
+# Credentials and secrets
 *.json

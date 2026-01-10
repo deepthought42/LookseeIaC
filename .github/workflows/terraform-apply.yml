@@ -1,0 +1,119 @@
+name: Terraform Apply
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy (dev, staging, prod)'
+        required: true
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'GCP/**/*.tf'
+      - '.github/workflows/terraform-apply.yml'
+
+env:
+  TF_VERSION: '1.6.0'
+  WORKING_DIRECTORY: 'GCP'
+
+jobs:
+  terraform:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_CREDENTIALS_JSON }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Generate terraform.tfvars from GitHub Secrets
+        run: |
+          cat > terraform.tfvars <<EOF
+          project_id  = "${{ secrets.TF_VAR_project_id }}"
+          region      = "${{ secrets.TF_VAR_region }}"
+          environment = "${{ github.event.inputs.environment || 'dev' }}"
+
+          pusher_key     = "${{ secrets.TF_VAR_pusher_key }}"
+          pusher_app_id  = "${{ secrets.TF_VAR_pusher_app_id }}"
+          pusher_cluster = "${{ secrets.TF_VAR_pusher_cluster }}"
+          pusher_secret  = "${{ secrets.TF_VAR_pusher_secret }}"
+
+          smtp_password = "${{ secrets.TF_VAR_smtp_password }}"
+          smtp_username = "${{ secrets.TF_VAR_smtp_username }}"
+
+          neo4j_password = "${{ secrets.TF_VAR_neo4j_password }}"
+          neo4j_username = "${{ secrets.TF_VAR_neo4j_username }}"
+          neo4j_bolt_uri = "${{ secrets.TF_VAR_neo4j_bolt_uri }}"
+          neo4j_db_name  = "${{ secrets.TF_VAR_neo4j_db_name }}"
+
+          credentials_file = "${{ secrets.TF_VAR_credentials_file }}"
+
+          vpc_name    = "${{ secrets.TF_VAR_vpc_name }}"
+          subnet_cidr = "${{ secrets.TF_VAR_subnet_cidr }}"
+          labels = {
+            environment = "${{ github.event.inputs.environment || 'dev' }}"
+            project     = "${{ secrets.TF_VAR_project_name || 'looksee' }}"
+            team        = "${{ secrets.TF_VAR_team_name || 'devops' }}"
+          }
+
+          auth0_domain = "${{ secrets.TF_VAR_auth0_domain }}"
+          auth0_audience = "${{ secrets.TF_VAR_auth0_audience }}"
+          auth0_client_id = "${{ secrets.TF_VAR_auth0_client_id }}"
+          auth0_client_secret = "${{ secrets.TF_VAR_auth0_client_secret }}"
+          auth0_management_api_client_id = "${{ secrets.TF_VAR_auth0_management_api_client_id }}"
+          auth0_management_api_client_secret = "${{ secrets.TF_VAR_auth0_management_api_client_secret }}"
+          auth0_management_api_audience = "${{ secrets.TF_VAR_auth0_management_api_audience }}"
+          auth0_management_api_domain = "${{ secrets.TF_VAR_auth0_management_api_domain }}"
+
+          # Auth0 UI Configuration
+          auth0_redirect_uri = "${{ secrets.TF_VAR_auth0_redirect_uri }}"
+          auth0_error_path = "${{ secrets.TF_VAR_auth0_error_path || '/error' }}"
+          auth0_app_uri = "${{ secrets.TF_VAR_auth0_app_uri }}"
+          auth0_api_uri = "${{ secrets.TF_VAR_auth0_api_uri }}"
+
+          selenium_instance_count = ${{ secrets.TF_VAR_selenium_instance_count || '1' }}
+
+          # Optional: Custom domain name for UI service
+          domain_name = "${{ secrets.TF_VAR_domain_name }}"
+          EOF
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+        continue-on-error: true
+
+      - name: Terraform Apply
+        if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve tfplan
+
+      - name: Terraform Plan Output
+        if: github.event_name == 'pull_request'
+        run: terraform show tfplan
+
