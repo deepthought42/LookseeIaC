@@ -501,6 +501,7 @@ module "selenium_chrome_cloud_run" {
   service_account_email = google_service_account.cloud_run_sa.email
   memory_allocation     = "2Gi"
   cpu_allocation        = "1"
+  max_sessions          = var.selenium_max_sessions
 }
 
 locals {

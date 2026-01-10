@@ -48,3 +48,9 @@ variable "cpu_allocation" {
   description = "CPU allocated for cloud run instance"
   type        = string
 }
+
+variable "max_sessions" {
+  description = "Maximum number of concurrent sessions per Selenium instance"
+  type        = number
+  default     = 1
+}

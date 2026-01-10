@@ -310,6 +310,12 @@ variable "selenium_instance_count" {
   default     = 1
 }
 
+variable "selenium_max_sessions" {
+  description = "Maximum number of concurrent sessions per Selenium instance"
+  type        = number
+  default     = 1
+}
+
 
 #variable "access_policy_id" {
 #  description = "Access policy ID"

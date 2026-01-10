@@ -94,6 +94,7 @@ jobs:
           auth0_api_uri = "${{ secrets.TF_VAR_auth0_api_uri }}"
 
           selenium_instance_count = ${{ secrets.TF_VAR_selenium_instance_count || '1' }}
+          selenium_max_sessions = ${{ secrets.TF_VAR_selenium_max_sessions || '1' }}
 
           # Optional: Custom domain name for UI service
           domain_name = "${{ secrets.TF_VAR_domain_name }}"

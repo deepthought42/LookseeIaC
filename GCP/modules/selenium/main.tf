@@ -13,6 +13,11 @@ resource "google_cloud_run_service" "selenium_standalone_chrome" {
           container_port = var.port
         }
 
+        env {
+          name  = "SE_NODE_MAX_SESSIONS"
+          value = tostring(var.max_sessions)
+        }
+
         resources {
           limits = {
             memory = var.memory_allocation
