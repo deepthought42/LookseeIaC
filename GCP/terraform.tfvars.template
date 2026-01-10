@@ -109,3 +109,8 @@ domain_name = null  # Set to your domain name, e.g., "app.example.com"
 # =============================================================================
 # Number of Selenium instances to create
 selenium_instance_count = 1  # Increase for higher load handling
+
+# Maximum concurrent sessions per Selenium instance
+# Total concurrent sessions = selenium_instance_count × selenium_max_sessions
+# Example: 10 instances × 4 sessions = 40 total concurrent sessions
+selenium_max_sessions = 1  # Default is 1, increase based on instance resources
