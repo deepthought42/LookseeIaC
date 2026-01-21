@@ -11,9 +11,9 @@ variable "environment" {
 }
 
 variable "image" {
-  description = "Container image to deploy"
+  description = "Container image to deploy. Recommended: selenium/standalone-chrome:latest or selenium/standalone-chrome:4.15.0"
   type        = string
-  default     = "docker.io/selenium/standalone-chrome:3.141.59"
+  default     = "docker.io/selenium/standalone-chrome:latest"
 }
 
 variable "service_name" {

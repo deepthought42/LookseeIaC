@@ -299,9 +299,9 @@ variable "labels" {
 #########################
 
 variable "selenium_image" {
-  description = "Selenium image"
+  description = "Selenium standalone Chrome Docker image"
   type        = string
-  default     = "docker.io/selenium/standalone-chrome:3.141.59"
+  default     = "docker.io/selenium/standalone-chrome:latest"
 }
 
 variable "selenium_instance_count" {
