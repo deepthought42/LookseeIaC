@@ -8,7 +8,7 @@ locals {
 provider "google" {
   project     = var.project_id
   region      = var.region
-  credentials = "/home/brandon/Dev/gcloud/webcrawler-450417-a21220d66d0e.json"
+  credentials = var.credentials_file
 }
 
 # VPC module
@@ -18,8 +18,9 @@ module "vpc" {
   project_id  = var.project_id
   environment = var.environment
   labels      = var.labels
+  vpc_name    = var.vpc_name
+  subnet_cidr = var.subnet_cidr
   ssh_source_ranges = ["10.42.0.0/16"]
-  subnet_cidr = "10.0.0.0/24"
 }
 
 
