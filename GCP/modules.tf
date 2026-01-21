@@ -496,7 +496,7 @@ module "selenium_chrome_cloud_run" {
   project_id            = var.project_id
   environment           = var.environment
   service_name          = each.value
-  image                 = var.selenium_image
+  image                 = "docker.io/selenium/standalone-chrome:${var.selenium_version}"
   region                = var.region
   service_account_email = google_service_account.cloud_run_sa.email
   memory_allocation     = "2Gi"

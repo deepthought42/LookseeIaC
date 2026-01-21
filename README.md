@@ -76,36 +76,37 @@ gcloud services enable \
 
 ## Getting Started
 
+### 1. Clone the Repository
+
 ```bash
-# 1. Clone and enter the repo
-$ git clone https://github.com/deepthought42/LookseeIaC.git
-$ cd LookseeIaC
-
-# 2. Export the bare‑minimum variables
-$ export TF_VAR_project_id="my‑gcp‑proj"
-$ export TF_VAR_region="us‑central1"
-$ export TF_VAR_environment="dev"
-
-# 3. Export your secrets (see next section)
-$ export TF_VAR_neo4j_username=neo4j
-$ export TF_VAR_neo4j_password="super‑secret"
-$ export TF_VAR_neo4j_bolt_uri="bolt+s://xxxxx.databases.neo4j.io"
-$ export TF_VAR_neo4j_db_name="neo4j"
-$ export TF_VAR_smtp_username="postmaster@example.com"
-$ export TF_VAR_smtp_password="s3ndM3Mail$"
-$ export TF_VAR_pusher_key="app-key"
-$ export TF_VAR_pusher_app_id="app-id"
-$ export TF_VAR_pusher_cluster="us3"
-
-# 4. Initialise and deploy
-$ terraform init
-$ terraform plan -out=tf.plan
-$ terraform apply tf.plan
+git clone https://github.com/deepthought42/LookseeIaC.git
+cd LookseeIaC/GCP
 ```
 
-The first run takes about 5‑7 minutes while Cloud Build cooks the container images.
+### 2. Configure Your Variables
 
-When `terraform apply` finishes it prints the public HTTPS URL of the API gateway and crawler service. Hit `/healthz` on either endpoint to confirm they're alive.
+Copy the template and fill in your values:
+
+```bash
+cp terraform.tfvars.template terraform.tfvars
+# Edit terraform.tfvars with your actual configuration values
+```
+
+See `SETUP.md` for detailed setup instructions and `terraform.tfvars.template` for all available configuration options.
+
+### 3. Initialize and Deploy
+
+```bash
+terraform init
+terraform plan
+terraform apply
+```
+
+The first run takes about 5‑7 minutes while resources are provisioned.
+
+When `terraform apply` finishes, it prints the public HTTPS URLs of your services. Check the outputs for service endpoints.
+
+**Note**: Never commit `terraform.tfvars` to version control - it contains sensitive values. The `.gitignore` file is configured to exclude it automatically.
 
 ---
 
@@ -334,10 +335,26 @@ module "neo4j_db" {
 
 ## Local Dev & CI/CD
 
-- **Local smoke test:** Each service (e.g., crawler, auditor, notifier, API) has a `make dev` (or equivalent) that builds and runs the container with mock environment variables.
-- **CI/CD:** Pushing a tag (e.g., "v1.2.3") triggers Cloud Build (which builds the Docker image, pushes to Artifact Registry, and re‑deploys the Cloud Run service). (The pipeline YAML lives beside each service so you can tweak build flags without touching Terraform.)
+### Local Development
 
-For a deeper dive into semantic versioning in pipelines, check my **"Ship It Like SemVer"** AWS blog post.
+1. Copy `GCP/terraform.tfvars.template` to `GCP/terraform.tfvars`
+2. Fill in your configuration values
+3. Run `terraform apply`
+
+See `GCP/SETUP.md` for detailed setup instructions.
+
+### CI/CD Integration
+
+This infrastructure is **vendor-agnostic** and works with any CI/CD system:
+
+- **Environment Variables**: Set `TF_VAR_*` variables in your CI/CD system
+- **Terraform Cloud**: Use workspace variables
+- **GitHub Actions**: Optional workflows available in `.github/workflows/`
+- **GitLab CI**: Use CI/CD variables
+- **Jenkins**: Use environment variables or credentials
+- **Any other system**: Use environment variables or parameterized builds
+
+All systems use the same `terraform.tfvars.template` as a reference for available variables. The configuration is designed to be portable and not locked into any specific vendor.
 
 ---
 

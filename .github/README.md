@@ -1,6 +1,8 @@
-# GitHub Actions Workflows
+# GitHub Actions Workflows (Optional)
 
-This directory contains GitHub Actions workflows for Terraform infrastructure management.
+> **Note**: These workflows are **optional**. The infrastructure can be deployed using the template-based approach without any CI/CD system. See `GCP/SETUP.md` for the standard setup guide.
+
+This directory contains optional GitHub Actions workflows for Terraform infrastructure management.
 
 ## Workflows
 

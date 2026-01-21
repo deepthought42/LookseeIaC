@@ -112,11 +112,6 @@ variable "neo4j_username" {
   type        = string
 }
 
-variable "neo4j_bolt_uri" {
-  description = "Neo4j database bolt URI"
-  type        = string
-}
-
 variable "neo4j_db_name" {
   description = "Neo4j database name"
   type        = string
@@ -298,10 +293,10 @@ variable "labels" {
 # Selenium
 #########################
 
-variable "selenium_image" {
-  description = "Selenium standalone Chrome Docker image"
+variable "selenium_version" {
+  description = "Selenium standalone Chrome Docker image version/tag (e.g., 'latest', '4.15.0', '3.141.59')"
   type        = string
-  default     = "docker.io/selenium/standalone-chrome:latest"
+  default     = "latest"
 }
 
 variable "selenium_instance_count" {

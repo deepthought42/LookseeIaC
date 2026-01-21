@@ -2,6 +2,16 @@
 # Terraform Variables Template
 # =============================================================================
 # Copy this file to terraform.tfvars and fill in your actual values
+#
+# Usage:
+#   1. Copy: cp terraform.tfvars.template terraform.tfvars
+#   2. Edit terraform.tfvars with your actual configuration values
+#   3. Run: terraform init && terraform apply
+#
+# Security Note:
+#   - Never commit terraform.tfvars to version control
+#   - This file contains sensitive values (passwords, API keys, etc.)
+#   - The .gitignore file is configured to exclude terraform.tfvars
 # =============================================================================
 
 # =============================================================================
@@ -30,11 +40,12 @@ smtp_username = "your-smtp-username"
 # =============================================================================
 # NEO4J DATABASE CONFIGURATION
 # =============================================================================
-# Neo4j database connection details
-neo4j_password = "your-neo4j-password"
-neo4j_username = "your-neo4j-username"
-neo4j_bolt_uri = "bolt://your-neo4j-instance-ip:7687"
-neo4j_db_name  = "your-neo4j-database-name"
+# Neo4j database configuration
+# Note: Neo4j is deployed by Terraform. The Bolt URI is automatically generated
+# from the deployed instance's IP address and stored in Secret Manager.
+neo4j_password = "your-neo4j-password"  # Initial password for Neo4j admin user
+neo4j_username = "neo4j"                 # Username for Neo4j (default: "neo4j")
+neo4j_db_name  = "neo4j"                # Database name (default: "neo4j")
 
 # =============================================================================
 # GCP SERVICE ACCOUNT
@@ -102,17 +113,18 @@ domain_name = null  # Set to your domain name, e.g., "app.example.com"
 # visual_design_audit_image = "docker.io/deepthought42/visual-design-audit:latest"
 # information_architecture_audit_image = "docker.io/deepthought42/information-architecture-audit:latest"
 # user_interface_image = "docker.io/deepthought42/user-interface:latest"
-# selenium_image = "docker.io/selenium/standalone-chrome:3.141.59"
+# selenium_version is configured in the SELENIUM CONFIGURATION section below
 
 # =============================================================================
 # SELENIUM CONFIGURATION
 # =============================================================================
-# Selenium standalone Chrome Docker image
+# Selenium standalone Chrome Docker image version/tag
+# Image will be: docker.io/selenium/standalone-chrome:{version}
 # Options:
-#   - "docker.io/selenium/standalone-chrome:latest" (always latest)
-#   - "docker.io/selenium/standalone-chrome:4.15.0" (specific version)
-#   - "docker.io/selenium/standalone-chrome:3.141.59" (older version)
-selenium_image = "docker.io/selenium/standalone-chrome:latest"
+#   - "latest" (always latest version)
+#   - "4.15.0" (specific Selenium Grid 4.x version - recommended for production)
+#   - "3.141.59" (older version - not recommended)
+selenium_version = "latest"
 
 # Number of Selenium instances to create
 selenium_instance_count = 1  # Increase for higher load handling

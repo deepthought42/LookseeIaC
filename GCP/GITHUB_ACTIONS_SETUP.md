@@ -1,10 +1,19 @@
-# GitHub Actions Setup Guide
+# GitHub Actions Setup Guide (Optional)
+
+> **Note**: This guide is **optional**. The infrastructure can be deployed using the template-based approach described in `SETUP.md` without any CI/CD system. This guide is for teams that want to use GitHub Actions specifically.
 
 This guide explains how to configure GitHub Actions to securely manage Terraform deployments using GitHub Secrets instead of committing sensitive values to the repository.
 
 ## Overview
 
 The GitHub Actions workflows automatically generate `terraform.tfvars` from GitHub Secrets during the CI/CD pipeline, ensuring sensitive values are never committed to the repository.
+
+**Alternative**: For vendor-agnostic deployment, use the template-based approach:
+1. Copy `terraform.tfvars.template` to `terraform.tfvars`
+2. Fill in your values
+3. Run `terraform apply`
+
+See `SETUP.md` for the standard setup guide.
 
 ## Required GitHub Secrets
 
@@ -38,10 +47,10 @@ Configure the following secrets in your GitHub repository:
 - `TF_VAR_smtp_username` - SMTP username
 
 #### Neo4j Configuration
-- `TF_VAR_neo4j_password` - Neo4j database password
+- `TF_VAR_neo4j_password` - Neo4j database password (initial password for admin user)
 - `TF_VAR_neo4j_username` - Neo4j username (usually `neo4j`)
-- `TF_VAR_neo4j_bolt_uri` - Neo4j Bolt URI (e.g., `bolt://34.171.187.210:7687`)
 - `TF_VAR_neo4j_db_name` - Neo4j database name (usually `neo4j`)
+- **Note**: The Bolt URI is automatically generated from the deployed Neo4j instance's IP address
 
 #### Auth0 Configuration
 - `TF_VAR_auth0_domain` - Auth0 domain (e.g., `dev-look-see.us.auth0.com`)
@@ -60,6 +69,9 @@ Configure the following secrets in your GitHub repository:
 - `TF_VAR_auth0_api_uri` - API URI (e.g., `https://api.look-see.com`)
 
 #### Optional Configuration
+- `TF_VAR_selenium_version` - Selenium standalone Chrome Docker image version/tag (default: `latest`)
+  - Image will be: `docker.io/selenium/standalone-chrome:{version}`
+  - Options: `latest`, `4.15.0`, `3.141.59`, etc.
 - `TF_VAR_selenium_instance_count` - Number of Selenium instances (default: `1`)
 - `TF_VAR_selenium_max_sessions` - Maximum concurrent sessions per Selenium instance (default: `1`)
   - Total concurrent sessions = `selenium_instance_count × selenium_max_sessions`

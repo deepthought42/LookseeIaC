@@ -65,7 +65,6 @@ jobs:
 
           neo4j_password = "${{ secrets.TF_VAR_neo4j_password }}"
           neo4j_username = "${{ secrets.TF_VAR_neo4j_username }}"
-          neo4j_bolt_uri = "${{ secrets.TF_VAR_neo4j_bolt_uri }}"
           neo4j_db_name  = "${{ secrets.TF_VAR_neo4j_db_name }}"
 
           credentials_file = "${{ secrets.TF_VAR_credentials_file }}"
@@ -93,7 +92,7 @@ jobs:
           auth0_app_uri = "${{ secrets.TF_VAR_auth0_app_uri }}"
           auth0_api_uri = "${{ secrets.TF_VAR_auth0_api_uri }}"
 
-          selenium_image = "${{ secrets.TF_VAR_selenium_image || 'docker.io/selenium/standalone-chrome:latest' }}"
+          selenium_version = "${{ secrets.TF_VAR_selenium_version || 'latest' }}"
           selenium_instance_count = ${{ secrets.TF_VAR_selenium_instance_count || '1' }}
           selenium_max_sessions = ${{ secrets.TF_VAR_selenium_max_sessions || '1' }}
 
