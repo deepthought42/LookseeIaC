@@ -107,6 +107,13 @@ domain_name = null  # Set to your domain name, e.g., "app.example.com"
 # =============================================================================
 # SELENIUM CONFIGURATION
 # =============================================================================
+# Selenium standalone Chrome Docker image
+# Options:
+#   - "docker.io/selenium/standalone-chrome:latest" (always latest)
+#   - "docker.io/selenium/standalone-chrome:4.15.0" (specific version)
+#   - "docker.io/selenium/standalone-chrome:3.141.59" (older version)
+selenium_image = "docker.io/selenium/standalone-chrome:latest"
+
 # Number of Selenium instances to create
 selenium_instance_count = 1  # Increase for higher load handling
 

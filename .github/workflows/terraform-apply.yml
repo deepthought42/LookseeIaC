@@ -93,6 +93,7 @@ jobs:
           auth0_app_uri = "${{ secrets.TF_VAR_auth0_app_uri }}"
           auth0_api_uri = "${{ secrets.TF_VAR_auth0_api_uri }}"
 
+          selenium_image = "${{ secrets.TF_VAR_selenium_image || 'docker.io/selenium/standalone-chrome:latest' }}"
           selenium_instance_count = ${{ secrets.TF_VAR_selenium_instance_count || '1' }}
           selenium_max_sessions = ${{ secrets.TF_VAR_selenium_max_sessions || '1' }}
 
