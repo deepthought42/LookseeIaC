@@ -100,25 +100,25 @@ variable "auth0_audience" {
 }
 
 variable "auth0_management_api_client_id" {
-  description = "Auth0 management API client ID"
+  description = "Auth0 management API client ID (required for admin features like user account deletion)"
   type        = string
   sensitive   = true
 }
 
 variable "auth0_management_api_client_secret" {
-  description = "Auth0 management API client secret"
+  description = "Auth0 management API client secret (required for admin features like user account deletion)"
   type        = string
   sensitive   = true
 }
 
 variable "auth0_management_api_audience" {
-  description = "Auth0 management API audience"
+  description = "Auth0 management API audience (required for admin features like user account deletion)"
   type        = string
   sensitive   = true
 }
 
 variable "auth0_management_api_domain" {
-  description = "Auth0 management API domain"
+  description = "Auth0 management API domain (required for admin features like user account deletion)"
   type        = string
   sensitive   = true
 }

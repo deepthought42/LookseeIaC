@@ -14,7 +14,7 @@ resource "google_secret_manager_secret" "neo4j_password" {
 
 resource "google_secret_manager_secret_version" "neo4j_password_version" {
   secret         = google_secret_manager_secret.neo4j_password.id
-  secret_data_wo = var.neo4j_password
+  secret_data = var.neo4j_password
 }
 
 # Neo4j Username Secret
@@ -33,7 +33,7 @@ resource "google_secret_manager_secret" "neo4j_username" {
 
 resource "google_secret_manager_secret_version" "neo4j_username_version" {
   secret         = google_secret_manager_secret.neo4j_username.id
-  secret_data_wo = var.neo4j_username
+  secret_data = var.neo4j_username
 }
 
 # Neo4j Production Database Name Secret
@@ -52,7 +52,7 @@ resource "google_secret_manager_secret" "neo4j_db_name" {
 
 resource "google_secret_manager_secret_version" "neo4j_db_name_version" {
   secret         = google_secret_manager_secret.neo4j_db_name.id
-  secret_data_wo = var.neo4j_db_name
+  secret_data = var.neo4j_db_name
 }
 
 # Pusher App ID Secret
@@ -71,7 +71,7 @@ resource "google_secret_manager_secret" "pusher_app_id" {
 
 resource "google_secret_manager_secret_version" "pusher_app_id_version" {
   secret         = google_secret_manager_secret.pusher_app_id.id
-  secret_data_wo = var.pusher_app_id
+  secret_data = var.pusher_app_id
 }
 
 # Pusher Production Cluster Secret
@@ -90,7 +90,7 @@ resource "google_secret_manager_secret" "pusher_cluster" {
 
 resource "google_secret_manager_secret_version" "pusher_cluster_version" {
   secret         = google_secret_manager_secret.pusher_cluster.id
-  secret_data_wo = var.pusher_cluster
+  secret_data = var.pusher_cluster
 }
 
 # Pusher Key Secret
@@ -109,7 +109,7 @@ resource "google_secret_manager_secret" "pusher_key" {
 
 resource "google_secret_manager_secret_version" "pusher_key_version" {
   secret         = google_secret_manager_secret.pusher_key.id
-  secret_data_wo = var.pusher_key
+  secret_data = var.pusher_key
 }
 
 # Pusher Key Secret
@@ -128,7 +128,7 @@ resource "google_secret_manager_secret" "pusher_secret" {
 
 resource "google_secret_manager_secret_version" "pusher_secret_version" {
   secret         = google_secret_manager_secret.pusher_secret.id
-  secret_data_wo = var.pusher_secret
+  secret_data = var.pusher_secret
 }
 
 # SMTP Password Secret
@@ -147,7 +147,7 @@ resource "google_secret_manager_secret" "smtp_password" {
 
 resource "google_secret_manager_secret_version" "smtp_password_version" {
   secret         = google_secret_manager_secret.smtp_password.id
-  secret_data_wo = var.smtp_password
+  secret_data = var.smtp_password
 }
 
 # SMTP Username Secret
@@ -166,7 +166,7 @@ resource "google_secret_manager_secret" "smtp_username" {
 
 resource "google_secret_manager_secret_version" "smtp_username_version" {
   secret         = google_secret_manager_secret.smtp_username.id
-  secret_data_wo = var.smtp_username
+  secret_data = var.smtp_username
 }
 
 resource "google_secret_manager_secret" "auth0_domain" {
@@ -184,7 +184,7 @@ resource "google_secret_manager_secret" "auth0_domain" {
 
 resource "google_secret_manager_secret_version" "auth0_domain_version" {
   secret         = google_secret_manager_secret.auth0_domain.id
-  secret_data_wo = var.auth0_domain
+  secret_data = var.auth0_domain
 }
 
 resource "google_secret_manager_secret" "auth0_audience" {
@@ -202,7 +202,7 @@ resource "google_secret_manager_secret" "auth0_audience" {
 
 resource "google_secret_manager_secret_version" "auth0_audience_version" {
   secret         = google_secret_manager_secret.auth0_audience.id
-  secret_data_wo = var.auth0_audience
+  secret_data = var.auth0_audience
 }
 
 resource "google_secret_manager_secret" "auth0_client_id" {
@@ -220,7 +220,7 @@ resource "google_secret_manager_secret" "auth0_client_id" {
 
 resource "google_secret_manager_secret_version" "auth0_client_id_version" {
   secret         = google_secret_manager_secret.auth0_client_id.id
-  secret_data_wo = var.auth0_client_id
+  secret_data = var.auth0_client_id
 }
 
 resource "google_secret_manager_secret" "auth0_client_secret" {
@@ -237,10 +237,11 @@ resource "google_secret_manager_secret" "auth0_client_secret" {
 }
 
 resource "google_secret_manager_secret_version" "auth0_client_secret_version" {
-  secret         = google_secret_manager_secret.auth0_client_secret.id
-  secret_data_wo = var.auth0_client_secret
+  secret      = google_secret_manager_secret.auth0_client_secret.id
+  secret_data = var.auth0_client_secret
 }
 
+# Auth0 Management API Secrets (Required for admin features)
 resource "google_secret_manager_secret" "auth0_management_api_client_id" {
   secret_id = "auth0-management-api-client-id"
   project   = var.project_id
@@ -255,8 +256,8 @@ resource "google_secret_manager_secret" "auth0_management_api_client_id" {
 }
 
 resource "google_secret_manager_secret_version" "auth0_management_api_client_id_version" {
-  secret         = google_secret_manager_secret.auth0_management_api_client_id.id
-  secret_data_wo = var.auth0_management_api_client_id
+  secret      = google_secret_manager_secret.auth0_management_api_client_id.id
+  secret_data = var.auth0_management_api_client_id
 }
 
 resource "google_secret_manager_secret" "auth0_management_api_client_secret" {
@@ -274,7 +275,7 @@ resource "google_secret_manager_secret" "auth0_management_api_client_secret" {
 
 resource "google_secret_manager_secret_version" "auth0_management_api_client_secret_version" {
   secret         = google_secret_manager_secret.auth0_management_api_client_secret.id
-  secret_data_wo = var.auth0_management_api_client_secret
+  secret_data = var.auth0_management_api_client_secret
 }
 
 resource "google_secret_manager_secret" "auth0_management_api_audience" {
@@ -292,7 +293,7 @@ resource "google_secret_manager_secret" "auth0_management_api_audience" {
 
 resource "google_secret_manager_secret_version" "auth0_management_api_audience_version" {
   secret         = google_secret_manager_secret.auth0_management_api_audience.id
-  secret_data_wo = var.auth0_management_api_audience
+  secret_data = var.auth0_management_api_audience
 }
 
 resource "google_secret_manager_secret" "auth0_management_api_domain" {
@@ -310,7 +311,7 @@ resource "google_secret_manager_secret" "auth0_management_api_domain" {
 
 resource "google_secret_manager_secret_version" "auth0_management_api_domain_version" {
   secret         = google_secret_manager_secret.auth0_management_api_domain.id
-  secret_data_wo = var.auth0_management_api_domain
+  secret_data = var.auth0_management_api_domain
 }
 
 # Selenium URLs Secret
@@ -329,5 +330,5 @@ resource "google_secret_manager_secret" "selenium_urls" {
 
 resource "google_secret_manager_secret_version" "selenium_urls_version" {
   secret         = google_secret_manager_secret.selenium_urls.id
-  secret_data_wo = jsonencode(var.selenium_urls)
+  secret_data = jsonencode(var.selenium_urls)
 }

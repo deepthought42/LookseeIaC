@@ -8,7 +8,7 @@ locals {
 provider "google" {
   project     = var.project_id
   region      = var.region
-  credentials = var.credentials_file
+  credentials = file(var.credentials_file)
 }
 
 # VPC module
@@ -443,6 +443,7 @@ module "user_interface_cloud_run" {
   region                = var.region
   labels                = { "environment" = var.environment, "application" = "user-interface" }
   service_account_email = google_service_account.cloud_run_sa.email
+
   environment_variables = {
     "GOOGLE_CLOUD_PROJECT" : var.project_id,
     "REGION" : var.region,
@@ -467,26 +468,6 @@ module "user_interface_cloud_run" {
   memory_limit       = "1Gi"
   cpu_allocation     = "0.5"
   cpu_limit          = "1"
-}
-
-# Custom domain mapping for UI service (with automatic SSL certificate)
-# Google Cloud Run automatically provisions SSL certificates for domain mappings
-resource "google_cloud_run_domain_mapping" "ui_domain" {
-  count    = var.domain_name != null ? 1 : 0
-  name     = var.domain_name
-  location = var.region
-  project  = var.project_id
-
-  metadata {
-    namespace = var.project_id
-    labels    = local.resource_labels
-  }
-
-  spec {
-    route_name = module.user_interface_cloud_run.service_name
-  }
-
-  depends_on = [module.user_interface_cloud_run]
 }
 
 # Selenium modules - Cloud Run (multiple instances)

@@ -170,28 +170,28 @@ variable "auth0_api_uri" {
 }
 
 #########################
-# Auth0 Management API Secrets
+# Auth0 Management API Secrets (Required)
 #########################
 
 variable "auth0_management_api_client_id" {
-  description = "Auth0 management API client ID"
+  description = "Auth0 management API client ID (required for admin features like user account deletion)"
   type        = string
   sensitive   = true
 }
 
 variable "auth0_management_api_client_secret" {
-  description = "Auth0 management API client secret"
+  description = "Auth0 management API client secret (required for admin features like user account deletion)"
   type        = string
   sensitive   = true
 }
 
 variable "auth0_management_api_audience" {
-  description = "Auth0 management API audience"
+  description = "Auth0 management API audience (required for admin features like user account deletion)"
   type        = string
 }
 
 variable "auth0_management_api_domain" {
-  description = "Auth0 management API domain"
+  description = "Auth0 management API domain (required for admin features like user account deletion)"
   type        = string
 }
 
@@ -267,7 +267,7 @@ variable "information_architecture_audit_image" {
 variable "user_interface_image" {
   description = "User interface container image"
   type        = string
-  default     = "docker.io/deepthought42/user-interface:latest"
+  default     = "docker.io/deepthought42/looksee-ui:latest"
 }
 
 #########################
@@ -321,9 +321,3 @@ variable "selenium_max_sessions" {
 #  description = "VPC access level"
 #  type        = string
 #}
-
-variable "domain_name" {
-  description = "Custom domain name for the UI service (e.g., app.example.com). If not provided, domain mapping will be skipped."
-  type        = string
-  default     = null
-}

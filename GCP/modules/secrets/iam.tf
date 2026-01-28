@@ -53,6 +53,61 @@ resource "google_secret_manager_secret_iam_member" "smtp_username_secret_accesso
   member    = "serviceAccount:${var.service_account_email}"
 }
 
+resource "google_secret_manager_secret_iam_member" "auth0_client_secret_secret_accessor" {
+  secret_id = google_secret_manager_secret.auth0_client_secret.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "auth0_client_id_secret_accessor" {
+  secret_id = google_secret_manager_secret.auth0_client_id.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "auth0_domain_secret_accessor" {
+  secret_id = google_secret_manager_secret.auth0_domain.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "auth0_audience_secret_accessor" {
+  secret_id = google_secret_manager_secret.auth0_audience.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "auth0_management_api_client_secret_accessor" {
+  secret_id = google_secret_manager_secret.auth0_management_api_client_secret.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "auth0_management_api_client_id_secret_accessor" {
+  secret_id = google_secret_manager_secret.auth0_management_api_client_id.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "auth0_management_api_audience_secret_accessor" {
+  secret_id = google_secret_manager_secret.auth0_management_api_audience.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "auth0_management_api_domain_secret_accessor" {
+  secret_id = google_secret_manager_secret.auth0_management_api_domain.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+resource "google_secret_manager_secret_iam_member" "selenium_urls_secret_accessor" {
+  secret_id = google_secret_manager_secret.selenium_urls.name
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${var.service_account_email}"
+}
+
+
 
 
 

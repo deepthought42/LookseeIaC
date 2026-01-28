@@ -77,7 +77,7 @@ auth0_audience = "https://api.your-domain.com"
 auth0_client_id = "your-auth0-client-id"
 auth0_client_secret = "your-auth0-client-secret"
 
-# Auth0 Management API settings (for advanced features)
+# Auth0 Management API settings (required for admin features like user account deletion)
 auth0_management_api_client_id = "your-management-api-client-id"
 auth0_management_api_client_secret = "your-management-api-client-secret"
 auth0_management_api_audience = "https://api.your-domain.com"
@@ -90,13 +90,13 @@ auth0_app_uri = "https://app.your-domain.com"  # Your application URI
 auth0_api_uri = "https://api.your-domain.com"  # Your API URI
 
 # =============================================================================
-# CUSTOM DOMAIN CONFIGURATION
+# CUSTOM DOMAIN CONFIGURATION (DEPRECATED)
 # =============================================================================
-# Optional: Custom domain name for the UI service
-# If provided, Terraform will create a domain mapping with automatic SSL certificate
-# Leave as null to use only the Cloud Run default URL
-# Example: "app.example.com" or "ui.yourdomain.com"
-domain_name = null  # Set to your domain name, e.g., "app.example.com"
+# Domain mapping is no longer managed by Terraform.
+# Set up domain mappings manually in GCP Console after deployment.
+# See GCP/DOMAIN_SETUP.md for manual domain mapping instructions.
+# The domain_name variable is kept for backwards compatibility but is not used.
+# domain_name = null
 
 # =============================================================================
 # CONTAINER IMAGE CONFIGURATION
