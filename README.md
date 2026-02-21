@@ -17,10 +17,11 @@
 9. [Project Structure](#project-structure)
 10. [Local Dev & CI/CD](#local-dev--cicd)
 11. [Security & Secrets](#security--secrets)
-12. [Neo4j Schema Management](#neo4j-schema-management)
-13. [Cleaning Up](#cleaning-up)
-14. [Contributing](#contributing)
-15. [License](#license)
+12. [Code Review Findings & Proposed Fixes](#code-review-findings--proposed-fixes)
+13. [Neo4j Schema Management](#neo4j-schema-management)
+14. [Cleaning Up](#cleaning-up)
+15. [Contributing](#contributing)
+16. [License](#license)
 
 ---
 
@@ -41,7 +42,7 @@ This repo is a **Terraform mono‑module** that spins up every Google Cloud reso
 
 ## Architecture
 
-Everything is 100% serverless so you only pay while the containers are awake.
+Most workloads are serverless (Cloud Run + Pub/Sub), with one stateful Compute Engine VM for Neo4j when you do not point at an external Aura instance.
 
 ---
 
@@ -53,6 +54,7 @@ Everything is 100% serverless so you only pay while the containers are awake.
 * **Docker** – Cloud Build can build for you, but local Docker makes debugging faster.
 * **Node 18+** – only needed if you hack on the micro‑services before pushing.
 * **A Neo4j Aura instance** (free tier works) or credentials to an existing cluster.
+* Optional: a service-account JSON key path for `TF_VAR_credentials_file` (if you are not using Application Default Credentials).
 
 > *Need a refresher on CI/CD? Peek at my AWS blog post "Anatomy of a CI/CD Pipeline" for extra context.*
 
@@ -114,6 +116,8 @@ When `terraform apply` finishes it prints the public HTTPS URL of the API gatewa
 All tunables live in **`variables.tf`**. You can override them via `terraform.tfvars` or environment variables.
 
 ### Root Variables
+
+> `credentials_file` is optional; if unset, the Google provider uses ADC from your local `gcloud auth application-default login` context.
 
 | Variable                             | Description                      | Default       |
 | ------------------------------------ | -------------------------------- | ------------- |
@@ -349,6 +353,23 @@ For a deeper dive into semantic versioning in pipelines, check my **"Ship It Lik
 - (Optional) A VPC Service Controls perimeter (e.g., "regular" or "bridge") (via the `security/service_perimeter` module) can be used to restrict access to GCP services.
 
 ---
+
+
+## Code Review Findings & Proposed Fixes
+
+This section summarizes issues found during a manual review and the recommended remediation path.
+
+1. **Hard-coded provider credential path (fixed).**
+   *Issue:* a user-specific absolute path was previously hard-coded in the Google provider block.
+   *Fix applied:* provider now uses optional `credentials_file` input and otherwise falls back to ADC.
+
+2. **Terraform state backup tracked in git (fixed).**
+   *Issue:* `GCP/terraform.tfstate.backup` was committed, which can leak resource metadata and secret references.
+   *Fix applied:* removed tracked backup file and expanded `.gitignore` with `*.tfstate*` patterns.
+
+3. **Public API invoker policy (recommended follow-up).**
+   *Issue:* `google_cloud_run_service_iam_member.public_access` grants `roles/run.invoker` to `allUsers` for the API module.
+   *Proposed fix:* restrict invokers to authenticated identities (IAP, Auth0-aware gateway, or a dedicated service account) and add an explicit toggle variable such as `allow_unauthenticated_api = false` by default.
 
 ## Neo4j Schema Management
 
