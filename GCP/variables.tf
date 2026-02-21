@@ -156,8 +156,9 @@ variable "auth0_audience" {
 #########################
 
 variable "credentials_file" {
-  description = "Path to GCP service account credentials JSON file"
+  description = "Optional path to GCP service account credentials JSON file. Leave null to use ADC (recommended)."
   type        = string
+  default     = null
 }
 
 #########################

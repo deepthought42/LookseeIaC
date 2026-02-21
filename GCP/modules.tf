@@ -8,7 +8,7 @@ locals {
 provider "google" {
   project     = var.project_id
   region      = var.region
-  credentials = "/home/brandon/Dev/gcloud/webcrawler-450417-a21220d66d0e.json"
+  credentials = var.credentials_file != null && var.credentials_file != "" ? file(var.credentials_file) : null
 }
 
 # VPC module
