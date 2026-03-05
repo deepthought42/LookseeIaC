@@ -1,0 +1,12 @@
+#!/bin/bash
+set -euo pipefail
+apt-get update -y
+apt-get install -y wget gnupg
+wget -O - https://debian.neo4j.com/neotechnology.gpg.key | gpg --dearmor -o /usr/share/keyrings/neo4j.gpg
+echo "deb [signed-by=/usr/share/keyrings/neo4j.gpg] https://debian.neo4j.com stable latest" | tee /etc/apt/sources.list.d/neo4j.list
+apt-get update -y
+apt-get install -y neo4j
+sed -i 's/#dbms.default_listen_address=.*/dbms.default_listen_address=0.0.0.0/' /etc/neo4j/neo4j.conf
+neo4j-admin dbms set-initial-password "${neo4j_password}"
+systemctl enable neo4j
+systemctl restart neo4j
